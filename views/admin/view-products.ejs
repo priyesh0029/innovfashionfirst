@@ -1,0 +1,86 @@
+<head>
+    <style>
+      .userlistfont{
+        font-size: larger;
+        font-family: unset;
+      }
+      .uservaluefont{
+        font: caption;
+        font-family: system-ui;
+      }
+    </style>
+  </head>
+  
+  <section class="">
+      <div class="container d-flex justify-content-center">
+        <div class="row w-75 mt-5">
+          <div class="col-md-12">
+            <h2 class="text-center">Product List</h2>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Table section -->
+    <section  mx-auto>
+      <div class="card-body">
+        <div class="row mt-5 mx-auto">
+          <div class="table-responsive">
+            <div class="table-responsive">
+              <table class="table align-middle table-nowrap mb-0">
+                <thead class="table-light">
+                  <tr class="userlistfont">
+                    <th class="align-middle " scope="col">No:</th>
+                    <th class="align-middle" scope="col">Product Name</th>
+                    <th class="align-middle" scope="col">Description</th>
+                    <th class="align-middle" scope="col">Price</th>
+                    <th class="align-middle" scope="col">Quantity</th>
+                    <th class="align-middle" scope="col">Size</th>
+                    <th class="align-middle" scope="col">Color</th>
+                    <th class="align-middle" scope="col">Gender</th>
+                    <th class="align-middle" scope="col">Brand</th>
+                    <th class="align-middle" scope="col">Catagory</th>
+                    <th class="align-middle" scope="col">Sub-Catagory</th>
+                    <th class="align-middle" scope="col">Image</th>
+                    <th class="align-middle" scope="col">Option</th>
+                    <th class="align-middle" scope="col">Option</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% response.forEach(function(item,index) { %>
+                  <tr class="uservaluefont">
+                    <td> <%=index+1 %> </td>
+                    <td><%= item.product_name %></td> 
+                    <td><%= item.description %></td>
+                    <td><%= item.price %></td>
+
+                    <% item.product_details.forEach(function(productDetails) { %>
+                      <td><%= productDetails.quantity %></td>
+                      <td><%= productDetails.size %></td>
+                      <td><%= productDetails.color %></td>
+                    <% }); %>
+                    <td><%= item.gender %></td>
+                    <td><%= item.brand %></td>
+                    <td><%= item.catagory %></td>
+                    <td><%= item.sub_catagory %></td>
+                    <td><img src="/uploads/<%=item.Image %>" alt="" style="width: 50px;height: 50px"></td>
+
+                    <td><a href ="/admin/edit-product/<%= response.id %>" class="btn btn-success" onclick="return confirm('Do you want to Edit  <%= item.product_name %> ?')">Edit</a></td>
+                    <td><a href = "/admin/delete-product/<%= response.id %>" class="btn btn-danger" onclick="return confirm('Do you want to block <%= item.product_name %> ?')">Delete</a></td>
+                    
+                    
+      
+                   
+                  </tr>
+                  <% }) %>
+
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- table-responsive end// -->
+        </div>
+      </div>
+    </section>
+    
