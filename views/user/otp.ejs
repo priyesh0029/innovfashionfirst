@@ -1,0 +1,65 @@
+<section>
+    
+    
+    <main class="main">
+      <section class="p-auto my-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-10 m-auto">
+              <div class="row d-flex justify-content-center">
+                <div class="col-lg-6">
+                  <div
+                    class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5"
+                  >
+                    <div class="padding_eight_all bg-white">
+                      <div class="heading_s1">
+                        <h3 class="mb-30">OTP</h3>
+                      </div>
+                      
+                      <%if (locals.userBlockStatus){%>
+                        <p style="color: red;">You are blocked by admin </p>
+                        <%}%>
+  
+                        <%if(locals.usernotExist){%>
+                          <p style="color: red;"> user does not exist! </p>
+                          <%}%>
+                    
+                      <form action="/otp" method="post">
+                        <div class="form-group">
+                          <input
+                            type="number"
+                            required=""
+                            name="phonenumber"
+                            placeholder="Your Mobile Number"
+                          />
+                        </div>
+                        
+                        <%if(locals.usernotExist){%>
+                            <p style="color: red;"> please enter your registered mobile number </p>
+                            <%}%> <br>
+                          
+                        </div>
+                        <div class="form-group">
+                          <button
+                            type="submit"
+                            class="btn btn-fill-out btn-block hover-up"
+                            name="login"
+                            style="width: 100%"
+                          >
+                          
+                            Submit
+                          </button>
+                        </div>
+                        
+                        
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    

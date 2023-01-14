@@ -6,9 +6,11 @@ var logger = require('morgan');
 var expressLayouts = require('express-ejs-layouts')
 const session= require('express-session')
 const nocache = require('nocache')
+const cors =  require('cors')
+
+require('dotenv').config();
 
 //Database connection
-
 const db = require("./models/connection");
 
 var userRouter = require('./routes/user');
@@ -20,6 +22,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(cors())
 app.use(expressLayouts)
 app.use(logger('dev'));
 app.use(express.json());

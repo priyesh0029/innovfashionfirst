@@ -1,3 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+  
+ 
+</head>
+<body>
+  
+
+
 <section class="">
   <div class="container d-flex justify-content-center">
     <div class="row w-75 mt-5">
@@ -8,6 +26,30 @@
           method="post"
           enctype="multipart/form-data"
         >
+
+          <label for="">Gender</label>
+          <select class="form-select" name="gender" id="gender">
+            <option></option>
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+            <option value="Kids">Kids</option>
+            
+          </select>
+
+          <label for="">Category</label>
+          <select class="form-select" name="category" id="category">
+            <option ></option>
+            <option value="Topwear"  >Topwear</option>
+            <option value="Bottomwear">Bottomwear</option>
+            <option value="Footwear">Footwear</option>
+            
+          </select>
+
+          <label for="">sub-category</label> 
+          <select class="form-select" name="subcategory" id="subcategory">
+          
+          </select>
+
           <label for="">Prodcut Name</label>
           <input type="text" name="name" class="form-control" />
           <label for="">Description</label>
@@ -25,37 +67,14 @@
           <label for="">color</label>
           <input type="text" name="color" class="form-control" />
 
-          <label for="">Gender</label>
-          <select class="form-select" name="gender" id="cars">
-
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Others">Others</option>
-            
-          </select>
+          
 
           <label for="">Brand</label>
           <input type="text" name="brand" class="form-control" />
-        
-          <label for="">Category</label>
-          <select class="form-select" name="category" id="cars">
-
-            <% category.forEach(function(item) { %>
-            <option value="<%=item %>"><%=item %></option>
-            <%});
-            %>
-          </select>
-          <label for="">sub-category</label> 
-          <select class="form-select" name="subcategory" id="cars">
-            
-            <% subcategory.forEach(function(item) { %>
-              <option value="<%=item %>"><%=item %></option>
-              <%});
-              %>
-          </select>
-
+          
+          <img src="" alt="" style="width:100px;height:auto" id="imageEdit" class="mt-3 mb-3">
           <label for="">Image</label>
-          <input type="file" name="Image" class="form-control" />
+          <input type="file" name="Image" class="form-control" onchange="changeImage(event)"/>
 
           <button type="submit" class="btn btn-success mt-4 mb-4">Submit</button>
         </form>
@@ -63,3 +82,16 @@
     </div>
   </div>
 </section>
+
+<script>
+  function changeImage(events)
+  {
+    document.getElementById('imageEdit').src = URL.createObjectURL(events.target.files[0])
+  }
+</script>
+
+  <script src="/admin-assets/js/ajaxgetsubcat.js"></script>
+
+
+</body>
+</html>

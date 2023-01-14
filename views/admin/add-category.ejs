@@ -4,8 +4,27 @@
       <div class="col-md-12">
         <h2 class="text-center">Add Category</h2>
         <form action="/admin/add-category" method="POST">
+
+          <label for="">Gender</label>
+          <select class="form-select" name="gender" id="cars">
+
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+            <option value="Kids">Kids</option>
+            
+          </select>
+
           <label for="">Category Name</label>
-          <input type="text" name="categoryname" class="form-control" />
+          <select class="form-select" name="category" id="cars">
+
+            <option value="Topwear">Topwear</option>
+            <option value="Bottomwear">Bottomwear</option>
+            <option value="Footwear">Footwear</option>
+            
+          </select>
+
+          <label for="">Sub-category Name</label>
+          <input type="text" name="subcategoryname" class="form-control" />
           <button type="submit" class="btn btn-success mt-4">Submit</button>
         </form>
       </div>
@@ -13,37 +32,262 @@
   </div>
 </section>
 <!-- Table section -->
-<section w-50 mx-auto>
+<section w-50 mx-auto class="mt-5">
+
+  <div class="container d-flex justify-content-center ">
+    
+      <a href="#men" ><h6>MEN</h6></a>
+      <a href="#women" class="px-5"><h6>WOMEN</h6></a>
+      <a href="#kids"><h6>KIDS</h6></a>
+
+    
+  </div>
+
+  
+
+
   <div class="card-body">
     <div class="row w-50 mt-5 mx-auto">
       <div class="table-responsive">
         <div class="table-responsive">
           <table class="table align-middle table-nowrap mb-0">
-            <thead class="table-light">
-              <tr>
-                <th class="align-middle" scope="col">NO</th>
-                <th class="align-middle" scope="col">Category Name</th>
-                <th class="align-middle" scope="col">Option</th>
-              </tr>
-            </thead>
+            
             <tbody>
-             
-              <% category.forEach(function(item,index) { %>
-              
+              <tr >
+              <td id="men"><h1>MEN</h1></td>
+              <br>
+              </tr>
               <tr>
-                <td><%=index+1 %></td>
-                <td><%=item %></td>
+               <td><p>TOPWEAR</p></td> 
+                
+              </tr>
+                
 
-                <td>
-                  <a href="/admin/edit-category?id=<%=id%>&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
-                  <a href="/admin/delete-category?id=<%=id%>&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
-                </td>
+              <% category.Men.Topwear.forEach(function(item,index) { %>
+                <tr>
+                
+                  <td><%=index+1%></td>
+                  
+                   <td><%=item %></td>
+                  
+                  
+
+            
+                  <td> 
+                    <a href="/admin/edit-category?id=<%=id%>&categoryobj=Men&subcategory=Topwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                    <a href="/admin/delete-category?id=<%=id%>&categoryobj=Men&subcategory=Topwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                  </td>
+                </tr>
+            
+            
+                <%});
+              %>
+              <tr>
+                <td><p>BOTTOMWEAR</p></td> 
               </tr>
 
+              <% category.Men.Bottomwear.forEach(function(item,index) { %>
+                <tr>
+                
+                  <td><%=index+1%></td>
+                  
+                   <td><%=item %></td>
+                  
+                  
 
-              <%});
-            %>
+            
+                  <td>
+                    <a href="/admin/edit-category?id=<%=id%>&categoryobj=Men&subcategory=Bottomwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                    <a href="/admin/delete-category?id=<%=id%>&categoryobj=Men&subcategory=Bottomwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                  </td>
+                </tr>
+            
+            
+                <%});
+              %>
+
+               <tr>
+               <td><p>FOOTWEAR</p></td> 
+              </tr>
+              <% category.Men.Footwear.forEach(function(item,index) { %>
+                <tr>
+                
+                  <td><%=index+1%></td>
+                  
+                   <td><%=item %></td>
+                  
+                  
+
+            
+                  <td>
+                    <a href="/admin/edit-category?id=<%=id%>&categoryobj=Men&subcategory=Footwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                    <a href="/admin/delete-category?id=<%=id%>&categoryobj=Men&subcategory=Footwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                  </td>
+                </tr>
+            
+            
+                <%});
+              %>
+
+
+              <tr >
+                <td><h1 id="women">WOMEN</h1></td>
+                <br>
+                </tr>
+                <tr>
+                 <td><p>TOPWEAR</p></td> 
+                  
+                </tr>
+                  
+  
+                <% category.Women.Topwear.forEach(function(item,index) { %>
+                  <tr>
+                  
+                    <td><%=index+1%></td>
+                    
+                     <td><%=item %></td>
+                    
+                    
+  
+              
+                    <td>
+                      <a href="/admin/edit-category?id=<%=id%>&categoryobj=Women&subcategory=Topwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                      <a href="/admin/delete-category?id=<%=id%>&categoryobj=Women&subcategory=Topwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                    </td>
+                  </tr>
+              
+              
+                  <%});
+                %>
+                <tr>
+                  <td><p>BOTTOMWEAR</p></td> 
+                </tr>
+  
+                <% category.Women.Bottomwear.forEach(function(item,index) { %>
+                  <tr>
+                  
+                    <td><%=index+1%></td>
+                    
+                     <td><%=item %></td>
+                    
+                    
+  
+              
+                    <td>
+                      <a href="/admin/edit-category?id=<%=id%>&categoryobj=Women&subcategory=Bottomwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                      <a href="/admin/delete-category?id=<%=id%>&categoryobj=Women&subcategory=Bottomwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                    </td>
+                  </tr>
+              
+              
+                  <%});
+                %>
+  
+                 <tr>
+                 <td><p>FOOTWEAR</p></td> 
+                </tr>
+                <% category.Women.Footwear.forEach(function(item,index) { %>
+                  <tr>
+                  
+                    <td><%=index+1%></td>
+                    
+                     <td><%=item %></td>
+                    
+                    
+  
+              
+                    <td>
+                      <a href="/admin/edit-category?id=<%=id%>&categoryobj=Women&subcategory=Footwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                      <a href="/admin/delete-category?id=<%=id%>&categoryobj=Women&subcategory=Footwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                    </td>
+                  </tr>
+              
+              
+                  <%});
+                %>
+                  
+                <tr >
+                  <td><h1 id="kids">KIDS</h1></td>
+                  <br>
+                  </tr>
+                  <tr>
+                   <td><p>TOPWEAR</p></td> 
+                    
+                  </tr>
+                    
+    
+                  <% category.Kids.Topwear.forEach(function(item,index) { %>
+                    <tr>
+                    
+                      <td><%=index+1%></td>
+                      
+                       <td><%=item %></td>
+                      
+                      
+    
+                
+                      <td>
+                        <a href="/admin/edit-category?id=<%=id%>&categoryobj=Kids&subcategory=Topwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                        <a href="/admin/delete-category?id=<%=id%>&categoryobj=Kids&subcategory=Topwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                      </td>
+                    </tr>
+                
+                
+                    <%});
+                  %>
+                  <tr>
+                    <td><p>BOTTOMWEAR</p></td> 
+                  </tr>
+    
+                  <% category.Kids.Bottomwear.forEach(function(item,index) { %>
+                    <tr>
+                    
+                      <td><%=index+1%></td>
+                      
+                       <td><%=item %></td>
+                      
+                      
+    
+                
+                      <td>
+                        <a href="/admin/edit-category?id=<%=id%>&categoryobj=Kids&subcategory=Bottomwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                        <a href="/admin/delete-category?id=<%=id%>&categoryobj=Kids&subcategory=Bottomwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                      </td>
+                    </tr>
+                
+                
+                    <%});
+                  %>
+    
+                   <tr>
+                   <td><p>FOOTWEAR</p></td> 
+                  </tr>
+                  <% category.Kids.Footwear.forEach(function(item,index) { %>
+                    <tr>
+                    
+                      <td><%=index+1%></td>
+                      
+                       <td><%=item %></td>
+                      
+                      
+    
+                
+                      <td>
+                        <a href="/admin/edit-category?id=<%=id%>&categoryobj=Kids&subcategory=Footwear&item=<%=item%>" class="btn btn-xs btn-success"> Edit</a>
+                        <a href="/admin/delete-category?id=<%=id%>&categoryobj=Kids&subcategory=Footwear&item=<%=item%>" class="btn btn-xs btn-danger"> Delete</a>
+                      </td>
+                    </tr>
+                
+                
+                    <%});
+                  %>
+    
+              
+                  <a href="#top" style="position: fixed ;right: 10em;"><i class="fa-solid fa-arrow-up"></i></a>
+             
             </tbody>
+
+            
           </table>
         </div>
       </div>

@@ -1,0 +1,59 @@
+<section>
+    
+    
+    <main class="main">
+      <section class="p-auto my-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-10 m-auto">
+              <div class="row d-flex justify-content-center">
+                <div class="col-lg-6">
+                  <div
+                    class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5"
+                  >
+                    <div class="padding_eight_all bg-white">
+                      <div class="heading_s1">
+                        <h3 class="mb-30">Mobile Phone Verification</h3>
+                      </div>
+                      <p class="text-secondary mt-2 mb-2">Enter the code we just send on your mobile phone <p class="text-primary mb-2" >+91 86684833</p></p>
+                    
+                      <%if(locals.invalidOtp){%>
+                        <p style="color: red;"> invalid Otp! </p>
+                        <%}%>
+
+                      <form action="/otpverify" method="post">
+                        <div class="form-group">
+                          <input
+                            type=""
+                            required=""
+                            name="otpnumber"
+                            placeholder="enter your otp"
+                          />
+                        </div>
+                        
+                          
+                        </div>
+                        <div class="form-group">
+                          <button
+                            type="submit"
+                            class="btn btn-fill-out btn-block hover-up"
+                            name="login"
+                            style="width: 100%"
+                          >
+                            verify
+                          </button>
+                        </div>
+                        
+                        
+                        
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    

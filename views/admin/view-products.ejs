@@ -37,13 +37,14 @@
                     <th class="align-middle" scope="col">Quantity</th>
                     <th class="align-middle" scope="col">Size</th>
                     <th class="align-middle" scope="col">Color</th>
-                    <th class="align-middle" scope="col">Gender</th>
                     <th class="align-middle" scope="col">Brand</th>
+                    <th class="align-middle" scope="col">Gender</th>
                     <th class="align-middle" scope="col">Catagory</th>
                     <th class="align-middle" scope="col">Sub-Catagory</th>
+                    <th class="align-middle" scope="col">Status</th>
                     <th class="align-middle" scope="col">Image</th>
-                    <th class="align-middle" scope="col">Option</th>
-                    <th class="align-middle" scope="col">Option</th>
+                    <th class="align-middle" scope="col">Edit</th>
+                    <th class="align-middle" scope="col">List/Unlist</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -63,12 +64,33 @@
                     <td><%= item.brand %></td>
                     <td><%= item.catagory %></td>
                     <td><%= item.sub_catagory %></td>
+                    <%if(item.product_status==true){%>
+                     
+                      <td class="text-success"> Active</td>
+                      
+                    <%}
+                    else{%>
+
+                      <td class="text-danger">Inactive</td>
+
+                    <%}
+                      %>
                     <td><img src="/uploads/<%=item.Image %>" alt="" style="width: 50px;height: 50px"></td>
 
-                    <td><a href ="/admin/edit-product/<%= response.id %>" class="btn btn-success" onclick="return confirm('Do you want to Edit  <%= item.product_name %> ?')">Edit</a></td>
-                    <td><a href = "/admin/delete-product/<%= response.id %>" class="btn btn-danger" onclick="return confirm('Do you want to block <%= item.product_name %> ?')">Delete</a></td>
+                    <td><a href = "/admin/edit-products/<%=item._id %>" class="btn btn-success" onclick="return confirm('Do you want to Edit  <%= item.product_name %> ?')">Edit</a></td>
                     
                     
+                    <%if(item.product_status==true){%>
+                     
+                      <td><a href = "/admin/unlist-product/<%=item._id %>" class="btn btn-danger" onclick="return confirm('Do you want to unlist <%= item.product_name %> ?')">Unlist</a></td>
+                      
+                    <%}
+                    else{%>
+
+                      <td><a href = "/admin/list-product/<%=item._id %>" class="btn btn-success" onclick="return confirm('Do you want to list <%= item.product_name %> ?')">List</a></td>
+
+                    <%}
+                      %>
       
                    
                   </tr>

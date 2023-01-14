@@ -62,32 +62,41 @@ module.exports = {
     //Category-section    
 
     getAdminAddCategory: (req, res) => {
-        adminHelpers.showcategory().then((response) => {
-
-            let id = response[0]._id
-            let category = response[0].category
-            res.render('admin/add-category', { adminStatus, layout: "adminLayout", category, id })
-        })
-
+         adminHelpers.showcategory().then((response) => {
+            console.log('showcategory :',response);
+             let id = response[0]._id
+             let category = response[0].category
+             console.log("id : ",id);
+             console.log("category : ",category);
+             res.render('admin/add-category', { adminStatus, layout: "adminLayout",id,category})
+         })
+       
     },
 
     postAdminAddCategory: (req, res) => {
 
-        adminHelpers.addCategory(req.body.categoryname).then((response) => {
+        adminHelpers.addCategory(req.body).then((response) => {
 
-            let id = response[0]._id
-            let category = response[0].category
-            console.log(category)
+            console.log(response[0].category);
 
-            res.render('admin/add-category', { adminStatus, layout: "adminLayout", category, id })
+            res.redirect('/admin/add-category')
         })
     },
 
     editCategory: (req, res) => {
         details = req.query
+
+        console.log("details  : ",details);
+        
         id = details.id
+        category = details.categoryobj
+        subcategory = details.subcategory
         item = details.item
-        res.render('admin/edit-category', { adminStatus, layout: "adminLayout", item, id })
+
+        console.log("category  : ",category);
+        console.log("subcategory : ",subcategory); 
+
+        res.render('admin/edit-category', { adminStatus, layout: "adminLayout", item, id,category,subcategory })
 
     },
 
@@ -107,56 +116,6 @@ module.exports = {
     },
 
 
-    //sub-category-section
-
-    getAdminAddSubCategory: (req, res) => {
-        adminHelpers.showSubcategory().then((response) => {
-
-            let id = response[0]._id
-            let subcategory = response[0].subcategory
-            res.render('admin/add-subcategory', { adminStatus, layout: "adminLayout", subcategory, id })
-        })
-
-    },
-
-    postAdminAddSubcategory: (req, res) => {
-
-        console.log("req.body.subname  =", req.body.subname)
-        adminHelpers.addSubCategory(req.body.subname).then((response) => {
-
-            let id = response[0]._id
-            let subcategory = response[0].subcategory
-            console.log(subcategory)
-
-            res.render('admin/add-subcategory', { adminStatus, layout: "adminLayout", subcategory, id })
-        })
-    },
-
-    editSubCategory: (req, res) => {
-        details = req.query
-        id = details.id
-        item = details.item
-        res.render('admin/edit-subcategory', { adminStatus, layout: "adminLayout", item, id })
-
-    },
-
-    posteditSubCategory: (req, res) => {
-
-
-        adminHelpers.editCrudSubCategory(req.query, req.body.subcategoryname).then((response) => {
-            res.redirect('/admin/add-subcategory')
-        })
-    },
-
-    deleteSubCategory: (req, res) => {
-
-        adminHelpers.deleteCrudSubCategory(req.query).then((response) => {
-            res.redirect('/admin/add-subcategory')
-        })
-    },
-
-
-
     //Product-section    
 
     getAdminAddProducts: (req, res) => {
@@ -174,6 +133,18 @@ module.exports = {
 
     },
 
+    getAddProductAjaxValues :(req,res)=>{
+
+        console.log("req.query :",req.query);
+        adminHelpers.addProductAjax(req.query).then((response) => {
+            
+
+            console.log("addProductAjax response : ",response)
+         
+        res.json(response)   
+        })
+    },
+
     postAdminAddProducts: (req, res) => {
 
         
@@ -186,20 +157,43 @@ module.exports = {
     getAdminViewProducts: (req, res) => {
 
         adminHelpers.viewProducts().then((response) => {
-            console.log(response);
+            console.log("response",response);
             res.render('admin/view-products',{adminStatus, layout: "adminLayout",response})
           })
         
     },
     getAdminEditProducts : (req, res) => {
-        adminHelpers.editProducts().then((response) => {
-            console.log(response);
-            res.render('admin/edit-products',{adminStatus, layout: "adminLayout",response})
+         console.log("req.params : ",req.params.id);
+        
+        adminHelpers.editProducts(req.params.id).then((response) => {
+            console.log("getbackresponse =",response);
+            res.render('admin/edit-product',{adminStatus, layout: "adminLayout",response})
           })
 
     },
 
+    postAdminEditProducts  : (req,res)=>{
+        console.log("postAdminEditProducts : ",req.params.id,req.body,req?.file?.filename);
 
+        adminHelpers.postEditProducts(req.body,req.params.id,req?.file?.filename).then((response) => {
+            res.redirect('/admin/view-products')
+        })
+        
+    },
+
+    getAdminUnlistProducts : (req,res)=>{
+
+        adminHelpers.UnlistProduct(req.params.id).then((response) => {
+            res.redirect('/admin/view-products')
+        })
+    },
+
+    getAdminlistProducts : (req,res)=>{
+
+        adminHelpers.listProduct(req.params.id).then((response) => {
+            res.redirect('/admin/view-products')
+        })
+    },
 
 //admin-Logout    
     getAdminLogout: (req, res) => {

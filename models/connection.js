@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+const ObjectId = require('mongodb').ObjectId
 
 
 
@@ -77,7 +78,7 @@ const productSchema = new mongoose.Schema({
       },
 
       size: {
-        type: Number,
+        type: String,
         required: true
       },
 
@@ -110,26 +111,101 @@ const productSchema = new mongoose.Schema({
   Image: {
     type: String,
     required: true
+  },
+  product_status :{
+    type : Boolean,default :true
   }
 
 
 })
+
+
+
 
 //catagories
 
-const categoriesSchema = new mongoose.Schema({
-  category: {
-    type: [String],
-    uppercase: true,
-    required: true
+const categorySchema = new mongoose.Schema({ 
+category:{  
+  Men: {
+    Topwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
+    Bottomwear:  {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
+    Footwear:  {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
   },
-
-  subcategory: {
-    type: [String],
-    uppercase: true,
-    required: true
+  Women: {
+    Topwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
+    Bottomwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
+    Footwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    }
+  },
+  Kids: {
+    Topwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
+    Bottomwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    },
+    Footwear: {
+      type: [String],
+      // required: true,
+      uppercase: true
+    }
   }
+} 
+});
+
+
+//cartSchema
+
+const cartSchema = new mongoose.Schema({
+
+  userId : ObjectId,
+  product :  [
+    {
+      product_id:{
+        type: ObjectId,
+        ref : "product"
+      },
+      quantity :{
+        type: Number
+      }
+    }
+  ],
+  count : Number,
+  sub_total : Number
+
 })
+
+
+
+
+
 
 
 //adminSchema
@@ -147,9 +223,11 @@ const adminSchema = new mongoose.Schema({
 })
 
 module.exports = {
+  
   user: mongoose.model('user', userSchema),
   product: mongoose.model('product', productSchema),
-  categories: mongoose.model('categories', categoriesSchema),
+  categories: mongoose.model('categories', categorySchema),
+  cart: mongoose.model('cart', cartSchema),
   admin: mongoose.model('admin', adminSchema)
  
 }

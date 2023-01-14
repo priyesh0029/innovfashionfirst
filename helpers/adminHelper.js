@@ -1,6 +1,7 @@
 const admin = require('../models/connection')
 const bcrypt = require('bcrypt');
 const { response } = require('express');
+const { product } = require('../models/connection');
 
 module.exports = {
 
@@ -105,30 +106,77 @@ module.exports = {
 
     //Category---section    
 
+    // addCategory: (categoryInfo) => {
+
+    //     let response =[]
+
+    //     console.log(categoryInfo);
+    //     return new Promise(async (resolve, reject) => {
+
+    //         try {
+
+    //             info = await admin.categories.findOne()
+    //             if (info == null) {
+    //                 await admin.categories.create({ category: [categoryInfo] })
+
+    //             } else {
+    //                 id = info._id
+    //                 await admin.categories.updateOne({ id }, { $push: { category: [categoryInfo] } })
+
+    //             }
+
+    //             response = await admin.categories.find().select('category').exec();
+    //             console.log('response.category =', response);
+
+
+
+    //             resolve(response)
+
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     })
+    // },
+
     addCategory: (categoryInfo) => {
 
-        let response =[]
+        let response = []
 
         console.log(categoryInfo);
+        console.log(categoryInfo.gender);
+
+
+
         return new Promise(async (resolve, reject) => {
+            let gender = categoryInfo.gender
+            let subcategory = categoryInfo.category
+            let subcategoryname = categoryInfo.subcategoryname
 
             try {
+                const [info] = await admin.categories.find();
 
-                info = await admin.categories.findOne()
-                if (info == null) {
-                    await admin.categories.create({ category: [categoryInfo] })
+                console.log("info", info);
+                if (info == undefined) {
 
-                } else {
-                    id = info._id
-                    await admin.categories.updateOne({ id }, { $push: { category: [categoryInfo] } })
+                    await admin.categories.create({
+                        category: {
+                            [gender]: {
+                                [subcategory]: [subcategoryname]
+                            }
+                        }
+                    });
+
+                }
+                else {
+                    console.log("info._id", info._id);
+                    await admin.categories.updateOne({ id: info._id }, {
+                        $push: { ["category." + gender + "." + subcategory]: subcategoryname }
+                    })
+
 
                 }
 
-                response = await admin.categories.find().select('category').exec();
-                console.log('response.category =', response);
-
-
-
+                response = await admin.categories.find()
                 resolve(response)
 
             } catch (err) {
@@ -160,6 +208,8 @@ module.exports = {
     editCrudCategory: (details, newItem) => {
 
         console.log("id", details.id);
+        console.log("category", details.categoryobj);
+        console.log("subcategory", details.subcategory);
         console.log("olditem :", details.item);
         console.log("newitem : ", newItem);
 
@@ -170,7 +220,7 @@ module.exports = {
                 await admin.categories.updateOne(
 
                     { _id: details.id }, {
-                    $set: { "category.$[element]": newItem }
+                    $set: { ["category." + details.categoryobj + "." + details.subcategory + "." + "$[element]"]: newItem }
                 },
                     { arrayFilters: [{ element: details.item }] }
 
@@ -190,10 +240,11 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
 
             console.log("id", details.id);
+            console.log("details", details);
             console.log("olditem :", details.item);
 
             try {
-                await admin.categories.updateOne({ _id: details.id }, { $pull: { "category": details.item } })
+                await admin.categories.updateOne({ _id: details.id }, { $pull: { ["category." + details.categoryobj + "." + details.subcategory]: details.item } })
 
                 resolve()
 
@@ -205,108 +256,6 @@ module.exports = {
 
     },
 
-    //subcategory---section
-
-
-    addSubCategory: (subcategoryInfo) => {
-
-
-
-        console.log("subcategoryInfo=", subcategoryInfo);
-        return new Promise(async (resolve, reject) => {
-
-            try {
-
-                info = await admin.categories.findOne()
-                if (info == null) {
-                    await admin.categories.create({ subcategory: [subcategoryInfo] })
-
-                } else {
-                    id = info._id
-                    await admin.categories.updateOne({ id }, { $push: { subcategory: [subcategoryInfo] } })
-
-                }
-
-                response = await admin.categories.find().select('subcategory').exec();
-                console.log('response.subcategory =', response);
-
-
-
-                resolve(response)
-
-            } catch (err) {
-                console.log(err);
-            }
-        })
-    },
-
-    showSubcategory: () => {
-
-        let response = []
-
-        return new Promise(async (resolve, reject) => {
-
-            try {
-
-                response = await admin.categories.find().select('subcategory').exec();
-
-
-
-                resolve(response)
-
-            } catch (err) {
-                console.log(err);
-            }
-        })
-    },
-
-    editCrudSubCategory: (details, newItem) => {
-
-        console.log("id", details.id);
-        console.log("olditem :", details.item);
-        console.log("newitem : ", newItem);
-
-        return new Promise(async (resolve, reject) => {
-            try {
-
-
-                await admin.categories.updateOne(
-
-                    { _id: details.id }, {
-                    $set: { "subcategory.$[element]": newItem }
-                },
-                    { arrayFilters: [{ element: details.item || null }] }
-
-
-                )
-                resolve()
-
-            } catch (err) {
-
-                console.log(err);
-            }
-        })
-    },
-
-    deleteCrudSubCategory: (details) => {
-
-        return new Promise(async (resolve, reject) => {
-
-            console.log("id", details.id);
-            console.log("olditem :", details.item);
-
-            try {
-                await admin.categories.updateOne({ _id: details.id }, { $pull: { "subcategory": details.item || null } })
-
-                resolve()
-
-            } catch (err) {
-                console.log(err);
-            }
-
-        })
-
-    },
 
     //Product-Section
 
@@ -330,8 +279,8 @@ module.exports = {
 
     addProduct: (product, imageName) => {
 
-        console.log(product);
-        console.log(imageName);
+        console.log("product : ", product);
+        console.log("imageName", imageName);
 
         return new Promise(async (resolve, reject) => {
 
@@ -364,7 +313,34 @@ module.exports = {
         })
     },
 
-    viewProducts:() => {
+    addProductAjax: (details) => {
+
+        console.log("ajax details : ", details);
+        console.log("ajax details : ", details.gender);
+        console.log("ajax details : ", details.category);
+        console.log("ajax details : ", typeof details.gender);
+
+        let response = []
+
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                response = await admin.categories.find({}).select({ ["category." + details.gender + "." + details.category]: 1 })
+
+
+
+                resolve(response)
+
+
+            } catch (err) {
+
+            }
+
+        })
+
+    },
+
+    viewProducts: () => {
 
         let response = []
 
@@ -372,7 +348,7 @@ module.exports = {
 
             try {
                 response = await admin.product.find()
-                
+
 
                 resolve(response)
 
@@ -382,16 +358,20 @@ module.exports = {
         })
     },
 
-    editProducts :()=>{
-        let response = {}
+    editProducts: (productID) => {
+
+        console.log("productID :", productID);
+
+        let response = []
 
         return new Promise(async (resolve, reject) => {
 
             try {
-                response.product = await admin.product.find()
-                response.catagories = await admin.categories.find()
-               
-                console.log("response=",response);
+
+
+                response = await admin.product.findOne({ _id: productID })
+
+                console.log("response=", response);
 
                 resolve(response)
 
@@ -399,8 +379,93 @@ module.exports = {
                 console.log(err);
             }
         })
-    }
+    },
 
+    postEditProducts: (updatedProduct, proID, Image) => {
 
+        // console.log("updatedProduct :", updatedProduct);
+        // console.log("proID :", proID);
+        // console.log("Image :", Image);
+
+        return new Promise(async (resolve, reject) => {
+
+            try {
+
+                await admin.product.updateOne({ _id: proID }, {
+                    $set:
+
+                    {
+
+                        product_name: updatedProduct.name,
+                        description: updatedProduct.description,
+                        price: updatedProduct.price,
+                        product_details: [{
+                            quantity: updatedProduct.quantity,
+                            size: updatedProduct.size,
+                            color: updatedProduct.color
+                        }],
+                        gender: updatedProduct.gender,
+                        brand: updatedProduct.brand,
+                        catagory: updatedProduct.category,
+                        sub_catagory: updatedProduct.subcategory,
+                        Image: Image
+
+                    }
+
+                })
+
+                resolve(response)
+
+            } catch (err) {
+                console.log(err);
+            }
+
+        })
+
+    },
+
+    UnlistProduct : (proID)=>{
+
+        return new Promise(async (resolve, reject) => {
+
+            try{
+
+                await admin.product.updateOne({ _id: proID }, {
+                    $set:
+                    {
+                       product_status : false
+                    }
+
+                })
+
+                resolve()
+
+            }catch(err){
+                console.log(err);
+            }
+        })
+    },
+
+    listProduct : (proID)=>{
+
+        return new Promise(async (resolve, reject) => {
+
+            try{
+
+                await admin.product.updateOne({ _id: proID }, {
+                    $set:
+                    {
+                       product_status : true
+                    }
+
+                })
+
+                resolve()
+
+            }catch(err){
+                console.log(err);
+            }
+        })
+    },
 
 }
