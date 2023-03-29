@@ -466,7 +466,15 @@
                                             </div>
                                             
                                             <div class="product-extra-link2">
-                                                <button type="submit" class="button button-add-to-cart"  onclick="addTocart('<%=response._id%>')" >Add to cart</button>
+                                                <% if(locals.headerStatus)
+                                                    {%>
+                                                        <button type="submit" class="button button-add-to-cart"  onclick="addTocart('<%=response._id%>','<%= response.price%>','productPage')" >Add to cart</button>
+                                                    <%} else
+                                                    {%>
+                                                        <button type="submit" class="button button-add-to-cart"  onclick="addTocart2()" >Add to cart</button>
+                                                    <%} 
+                                                %>
+                                               
                                                     
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
@@ -1128,6 +1136,14 @@
             </div>
         </div>
     </div>
+    <script>
+       function addTocart2(){
+        swal({
+        title: "Please login to Continue!",
+        button: "OK",
+        });
+       }
+    </script>
     <!-- Vendor JS-->
     <!-- <script src="/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/assets/js/vendor/jquery-3.6.0.min.js"></script>

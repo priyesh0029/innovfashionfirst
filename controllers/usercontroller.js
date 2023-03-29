@@ -1,6 +1,7 @@
 const { response } = require('express');
 const userhelpers = require('../helpers/userHelper')
 const twilio = require('../middlewares/twilio')
+const ObjectId = require('mongodb').ObjectId
 
 var headerStatus, loginStatus,user,mobile
 
@@ -55,7 +56,7 @@ module.exports = {
 
     getUserSignup: (req, res) => {
         let emailStatus = true
-        res.render('user/signup', { emailStatus },{headerStatus:false})
+        res.render('user/signup', {emailStatus,headerStatus:false})
     },
 
     postUserSignup: (req, res) => {
@@ -69,7 +70,7 @@ module.exports = {
                 res.redirect('/login')
 
             } else {
-                res.render('user/signup', { emailStatus },{headerStatus:false})
+                res.render('user/signup', { emailStatus,headerStatus:false})
 
             }
         })
@@ -140,7 +141,12 @@ module.exports = {
         userhelpers.ShopProducts().then((response)=>{
 
             console.log("getUserShop : ",response);
-            res.render('user/shop',{headerStatus:true,user,response})
+            
+            if(req.session.user){
+                res.render('user/shop',{headerStatus:true,user,response})
+            }else{
+                res.render('user/shop',{headerStatus:false,response})
+            }
         })
 
        
@@ -154,9 +160,13 @@ module.exports = {
 
             console.log("getproductDetails : ",response);
 
-             res.render('user/product-details',{headerStatus:true,user,response})
+            if(req.session.user){
+                res.render('user/product-details',{headerStatus:true,user,response})
+            }else{
+                res.render('user/product-details',{headerStatus:false,response})
+            }
+            
         })
-       
     },
  
     userCart : (req,res)=>{
@@ -167,14 +177,16 @@ module.exports = {
         
         userhelpers.getuserCart(useremail).then((response)=>{
 
-            
-            let count = response.count
-            let cart= response.cart
-            console.log(" product_count : ",response.count);
-            console.log("first product_name : ",cart.product[0].product_id._id);
- 
-            res.render('user/cart',{headerStatus:true,user,count,cart})
-
+            if(response.count==null){
+                let count = response.count
+                res.render('user/cart',{headerStatus:true,user,count})
+             }else{
+                let count = response.count
+                let cart= response.cart
+                let grand_Total = response.total
+     
+                res.render('user/cart',{headerStatus:true,user,count,cart,grand_Total})
+            }
         })
 
     },
@@ -183,23 +195,167 @@ module.exports = {
 
         let quantity = parseInt (req.query.quantity)
         let proID  = req.query.proID
+        let subTotal = parseInt(req.query.sub_total)
 
 
         const email = req.session.user.email
-
-
-        console.log("req.query : ",quantity,proID);
+        console.log("req.query : ",quantity,proID,subTotal);
         console.log("req.session.user : ",req.session.user);
 
-        userhelpers.createUserCart(proID,quantity,email).then((response)=>{
+        userhelpers.createUserCart(proID,quantity,subTotal,email).then((response)=>{
 
-            
+            console.log("createUserCart response : ",response);
 
              res.json(response)
         })
 
        
 
+    },
+
+    postAjaxDeleteCartItem : (req,res)=>{
+
+        console.log("ettittund",req.query);
+
+        let proID  = req.query.proID
+        const email = req.session.user.email
+
+        console.log("postAjaxDeleteCartItem : ",proID,email);
+
+        userhelpers.deleteUserCartItem(proID,email).then((response)=>{
+            console.log("essponse of deletecrt :",response);
+
+            res.json(response)
+
+        })
+    },
+
+    getCheckOut : (req,res)=>{
+        let useremail = req.session.user.email
+
+        console.log("useremail :",useremail);
+        
+        userhelpers.getCheckOut(useremail).then((response)=>{
+
+            if(response.count==null){
+                let count = response.count
+                res.render('user/cart',{headerStatus:true,user,count})
+             }else{
+                let count = response.count
+                let cart= response.cart
+                let userAddress = response.address
+                let addressCount = response.addressCount
+                let grand_Total = 0
+                for(let i=0;i<response.count;i++){
+                     grand_Total += response.cart.product[i].sub_total
+                }
+                console.log(" product_count : ",response.count);
+                console.log("first product_name : ",cart.product[0].product_id._id);
+     
+                res.render('user/checkOut',{headerStatus:true,user,count,cart,grand_Total,userAddress,addressCount})
+            }
+        })
+    },
+
+    userProfile : (req,res)=>{
+        const email = req.session.user.email
+        userhelpers.userProfile(email).then((response)=>{
+            if(response!==null){
+                res.render('user/userProfile',{headerStatus:true,user,response})
+            }
+        })
+    },
+    orders :  (req,res)=>{
+        const email = req.session.user.email
+        userhelpers.userProfile(email).then((response)=>{
+            if(response!==null){
+                let orderId = req.query.orderId
+                orderId = ObjectId(orderId)
+                const order = response.find(obj => obj._id.equals(orderId));
+                console.log(order);
+                
+                res.render('user/ordershistory',{headerStatus:true,user,order})
+            }
+        })
+    },
+
+    viewAddress: (req,res)=>{
+        const email = req.session.user.email
+        userhelpers.getuserAddress(email).then((response)=>{
+            response = response.address
+            res.json(response)
+        })
+    },
+
+    checkPassword : (req,res)=>{
+        const email = req.session.user.email
+        const password = req.body.password
+        const confpassword = req.body.cpassword
+        console.log("password : ",password);
+        userhelpers.checkPassword(email,password,confpassword).then((response)=>{
+            
+            res.json(response)
+        })
+    },
+
+    postAddress : (req,res)=>{
+        const pageInfo = req.query.pageInfo
+        console.log(pageInfo);
+        
+        console.log("address : ",req.body);
+        const email = req.session.user.email
+        console.log(email);
+        userhelpers.addUserAddress(req.body,email,pageInfo).then((response)=>{
+            console.log("response",response);
+            let userProfile = "userProfile"
+            let checkout = "checkout"
+            if(response=== userProfile){
+                res.redirect('/userProfile')
+            }else if(response === checkout){
+                res.redirect('/checkOut')
+            }
+        })
+    },
+
+    posteditAddress : (req,res)=>{
+        
+        console.log("address : ",req.body);
+        console.log("query addressid",req.query.addressId);
+        const addressId = req.query.addressId
+        const email = req.session.user.email
+        console.log(email);
+        userhelpers.editUserAddress(req.body,addressId,email).then((response)=>{
+            res.redirect('/userProfile')
+        })
+    },
+
+    postDeleteAddress :(req,res)=>{
+        
+        const addressId = req.query.addressID
+        console.log("postDeleteAddress :",addressId);
+        const email = req.session.user.email
+        console.log(email);
+        userhelpers.deleteUserAddress(addressId,email).then((response)=>{
+            response="success"
+            res.json(response)
+        })
+    },
+
+    checkoutAddress : (req,res)=>{
+        console.log("address : ",req.body.addressID);
+        const email = req.session.user.email
+        console.log(email);
+        userhelpers.checkoutAddress(req.body.addressID,email).then((response)=>{
+            res.json(response)
+        })
+    },
+
+    placeOrder : (req,res)=>{
+        const userId = req.query.userId;
+        console.log("place order body and query : ",req.body,userId);
+        userhelpers.placeOrder(userId,req.body).then((response)=>{
+            res.render('user/orderPlaced',{headerStatus:true,user})
+        })
     },
 
     getLogout :(req, res) => {

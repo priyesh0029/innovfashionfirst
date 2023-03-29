@@ -407,13 +407,23 @@
                       </div>
                       <div class="product-price">
                         <span>
-                          <%= item.price%>
+                          ₹<%= item.price%>
                         </span>
                         <span class="old-price">₹1999.00</span>
                       </div>
                       <div class="product-action-1 show">
-                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i
-                            class="fi-rs-shopping-bag-add"></i></a>
+                        <% if(locals.headerStatus)
+                        {%>
+                          <div aria-label="Add To Cart" class="action-btn hover-up" ><i
+                            class="fi-rs-shopping-bag-add"  onclick="addTocart('<%= item._id %>','<%= item.price%>')"></i></div>
+                      
+                        <%} else
+                        {%>
+                          <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                            class="fi-rs-shopping-bag-add"  onclick="addTocart2()"></i></div>
+                        <%} 
+                    %>
+                        
                       </div>
                     </div>
                   </div>
@@ -714,6 +724,14 @@
     </div>
   </div>
 </section>
+<script>
+  function addTocart2(){
+   swal({
+   title: "Please login to Continue!",
+   button: "OK",
+   });
+  }
+</script>
 <!-- Vendor JS-->
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/shop-grid-left.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:26:43 GMT -->

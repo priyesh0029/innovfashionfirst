@@ -16,7 +16,7 @@ router.post('/signup',controller.postUserSignup)
 
 router.route('/otp').get(controller.getOtp).post(controller.postOtp)
 
-// router.route('/otpverify').get(controller.getOtpverify).post(controller.postOtpverify)
+//  router.route('/otpverify').get(controller.getOtpverify).post(controller.postOtpverify)
 
 router.post('/otpverify',controller.postOtpverify)
 
@@ -29,6 +29,29 @@ router.post('/otpverify',controller.postOtpverify)
     router.get('/cart',userauths.userAuth,controller.userCart)
 
     router.get('/postaddcart',userauths.userAuth,controller.postAjaxuserCart)
+
+    router.get('/deletecartItem',controller.postAjaxDeleteCartItem)
+
+    router.get('/checkOut',userauths.userAuth,controller.getCheckOut)
+
+    router.get('/userProfile',userauths.userAuth,controller.userProfile)
+
+    router.post('/postAddress',userauths.userAuth,controller.postAddress)
+
+    router.post('/posteditAddress',userauths.userAuth,controller.posteditAddress)
+
+    router.get('/deleteAddress',userauths.userAuth,controller.postDeleteAddress)
+    
+    router.post('/postcheckoutAddress',userauths.userAuth,controller.checkoutAddress)
+
+    router.post('/placeOrder',userauths.userAuth,controller.placeOrder)
+    
+    router.get('/orders',userauths.userAuth,controller.orders)
+
+    router.get('/viewAddress',userauths.userAuth,controller.viewAddress)
+
+    router.post('/checkPassword',userauths.userAuth,controller.checkPassword)
+
 
 
     router.get('/logout',controller.getLogout)

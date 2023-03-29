@@ -72,20 +72,20 @@ const productSchema = new mongoose.Schema({
   },
 
   product_details: [{
-      quantity: {
-        type: Number,
-        required: true
-      },
+    quantity: {
+      type: Number,
+      required: true
+    },
 
-      size: {
-        type: String,
-        required: true
-      },
+    size: {
+      type: String,
+      required: true
+    },
 
-      color: {
-        type: String,
-        required: true
-      }
+    color: {
+      type: String,
+      required: true
+    }
 
   }],
 
@@ -112,8 +112,8 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  product_status :{
-    type : Boolean,default :true
+  product_status: {
+    type: Boolean, default: true
   }
 
 
@@ -124,60 +124,60 @@ const productSchema = new mongoose.Schema({
 
 //catagories
 
-const categorySchema = new mongoose.Schema({ 
-category:{  
-  Men: {
-    Topwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
+const categorySchema = new mongoose.Schema({
+  category: {
+    Men: {
+      Topwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
+      Bottomwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
+      Footwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
     },
-    Bottomwear:  {
-      type: [String],
-      // required: true,
-      uppercase: true
+    Women: {
+      Topwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
+      Bottomwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
+      Footwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      }
     },
-    Footwear:  {
-      type: [String],
-      // required: true,
-      uppercase: true
-    },
-  },
-  Women: {
-    Topwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
-    },
-    Bottomwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
-    },
-    Footwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
-    }
-  },
-  Kids: {
-    Topwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
-    },
-    Bottomwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
-    },
-    Footwear: {
-      type: [String],
-      // required: true,
-      uppercase: true
+    Kids: {
+      Topwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
+      Bottomwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      },
+      Footwear: {
+        type: [String],
+        // required: true,
+        uppercase: true
+      }
     }
   }
-} 
 });
 
 
@@ -185,26 +185,110 @@ category:{
 
 const cartSchema = new mongoose.Schema({
 
-  userId : ObjectId,
-  product :  [
+  userId: ObjectId,
+  product: [
     {
-      product_id:{
+      product_id: {
         type: ObjectId,
-        ref : "product"
+        ref: "product"
       },
-      quantity :{
+      quantity: {
+        type: Number
+      },
+      sub_total: {
         type: Number
       }
     }
   ],
-  count : Number,
-  sub_total : Number
+  count: Number,
+  grand_Total: Number
 
 })
 
+const addressSchema = new mongoose.Schema({
+
+  userId: ObjectId,
+  address: [{
+
+    name: {
+      type: String,
+      required: true
+    },
+    phonenumber: {
+      type: Number,
+      required: true
+    },
+    pincode: {
+      type: Number,
+      required: true
+    },
+
+    locality: {
+      type: String,
+      required: true
+    },
+
+    addressLine: {
+      type: String,
+      required: true
+    },
+    city: {
+      type: String,
+      required: true
+    },
+
+    state: {
+      type: String,
+      required: true
+    },
+    landmark: {
+      type: String,
+    },
+     altPhone: {
+      type: Number,
+    }
+  }]
 
 
+})
 
+//orderSchema
+
+const orderSchema = new mongoose.Schema({
+
+  userId: ObjectId,
+  orders: [{
+    name: String,
+    productDetails: Array,
+    paymentMethod: String,
+    paymentStatus:  {
+      type: String,
+      enum: ['success', 'pending', 'failed'],
+      default: 'success'
+    },
+    totalPrice: Number,
+    totalQuantity: Number,
+    shippingAddress: {
+      type: ObjectId,
+      ref: 'address'
+    },
+    paymentMode: String,
+    status: {
+      type: Boolean,
+      default: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    orderStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'shipped', 'delivered'],
+      default: 'pending'
+    }
+  }
+  ]
+})
 
 
 
@@ -223,12 +307,14 @@ const adminSchema = new mongoose.Schema({
 })
 
 module.exports = {
-  
+
   user: mongoose.model('user', userSchema),
   product: mongoose.model('product', productSchema),
   categories: mongoose.model('categories', categorySchema),
   cart: mongoose.model('cart', cartSchema),
+  address: mongoose.model('address', addressSchema),
+  order : mongoose.model('order', orderSchema),
   admin: mongoose.model('admin', adminSchema)
- 
+
 }
 

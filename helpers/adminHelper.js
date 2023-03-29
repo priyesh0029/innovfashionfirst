@@ -106,37 +106,6 @@ module.exports = {
 
     //Category---section    
 
-    // addCategory: (categoryInfo) => {
-
-    //     let response =[]
-
-    //     console.log(categoryInfo);
-    //     return new Promise(async (resolve, reject) => {
-
-    //         try {
-
-    //             info = await admin.categories.findOne()
-    //             if (info == null) {
-    //                 await admin.categories.create({ category: [categoryInfo] })
-
-    //             } else {
-    //                 id = info._id
-    //                 await admin.categories.updateOne({ id }, { $push: { category: [categoryInfo] } })
-
-    //             }
-
-    //             response = await admin.categories.find().select('category').exec();
-    //             console.log('response.category =', response);
-
-
-
-    //             resolve(response)
-
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     })
-    // },
 
     addCategory: (categoryInfo) => {
 
