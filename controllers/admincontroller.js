@@ -7,7 +7,7 @@ module.exports = {
         if (req.session.admin) {
             res.redirect('/admin/admin-dashboard')
         } else {
-            res.render('admin/login', { adminStatus: false, layout: "adminLayout" })
+            res.render('admin/login', { adminStatus: false, layout: "adminLayout2" })
         }
 
     },
@@ -16,11 +16,11 @@ module.exports = {
 
         adminHelpers.adminLogin(req.body).then((response) => {
 
-
-            req.session.admin = response.status
+            console.log("response login admin  : ",response);
+            req.session.admin = response
 
             if (req.session.admin) {
-                adminStatus = req.session.admin
+                adminStatus = req.session.admin.status
                 res.redirect('/admin/admin-dashboard')
             }
         })
@@ -63,23 +63,22 @@ module.exports = {
 
     getAdminAddCategory: (req, res) => {
          adminHelpers.showcategory().then((response) => {
-            console.log('showcategory :',response);
              let id = response[0]._id
              let category = response[0].category
-             console.log("id : ",id);
-             console.log("category : ",category);
-             res.render('admin/add-category', { adminStatus, layout: "adminLayout",id,category})
+             const catError = req.session.admin.error
+             console.log("catError : ",catError,typeof(catError));
+             res.render('admin/add-category', { adminStatus, layout: "adminLayout",id,category,catError})
+             req.session.admin.error = null
+             console.log("catError2 : ",req.session.admin.error);
          })
        
     },
 
     postAdminAddCategory: (req, res) => {
-
         adminHelpers.addCategory(req.body).then((response) => {
-
-            console.log(response[0].category);
-
-            res.redirect('/admin/add-category')
+            res.status(200).json({status:true})
+        }).catch((err)=>{
+            res.status(400).json(err) 
         })
     },
 
@@ -146,9 +145,11 @@ module.exports = {
     },
 
     postAdminAddProducts: (req, res) => {
-
+        console.log(req.files);
+        let image = req.files.map(files=>(files.filename))
+          console.log(image);
         
-        adminHelpers.addProduct(req.body,req.file.filename).then((response) => {
+        adminHelpers.addProduct(req.body,image).then((response) => {
 
           res.redirect('/admin/add-product') 
         })
@@ -172,10 +173,40 @@ module.exports = {
 
     },
 
-    postAdminEditProducts  : (req,res)=>{
-        console.log("postAdminEditProducts : ",req.params.id,req.body,req?.file?.filename);
+    postAdminEditProducts  : async(req,res)=>{
+        console.log("hellodfjdklfjkdf",req.files)
+        let oldProductDetails = await adminHelpers.editProduct(req.params.id)
 
-        adminHelpers.postEditProducts(req.body,req.params.id,req?.file?.filename).then((response) => {
+        let oldImageArray=oldProductDetails.Image
+        let Editedimages = []
+        console.log(oldImageArray);
+
+      
+        if(req.files.image1){
+          Editedimages[0]=req.files.image1[0].filename
+        }else{
+          Editedimages[0]=oldImageArray[0]
+        }
+
+        if(req.files.image2){
+          Editedimages[1]=req.files.image2[0].filename
+        }else{
+          Editedimages[1]=oldImageArray[1]
+        }
+
+        if(req.files.image3){
+          Editedimages[2]=req.files.image3[0].filename
+        }else{
+          Editedimages[2]=oldImageArray[2]
+        }
+
+        if(req.files.image4){
+          Editedimages[3]=req.files.image4[0].filename
+        }else{
+          Editedimages[3]=oldImageArray[3]
+        }
+      
+        adminHelpers.postEditProducts(req.body,req.params.id,Editedimages).then((response) => {
             res.redirect('/admin/view-products')
         })
         
@@ -192,6 +223,33 @@ module.exports = {
 
         adminHelpers.listProduct(req.params.id).then((response) => {
             res.redirect('/admin/view-products')
+        })
+    },
+
+    getOrderDetails : (req,res)=>{
+        adminHelpers.getOrderDetails().then((response) => {
+            
+            res.render('admin/orders',{adminStatus, layout: "adminLayout",response})
+        })
+    },
+    orderProDetails : (req,res)=>{
+        const orderID = req.query.orderid
+        const email = req.query.email
+        console.log(req.query);
+        adminHelpers.orderProDetails(orderID,email).then((response) => {
+            console.log("resonse order history sggregation: ",response);
+            res.render('admin/order-proDetails',{adminStatus, layout: "adminLayout",response})
+        })
+    },
+
+    amendOrderStatus: (req,res)=>{
+        const orderStatus = req.body.orderStatus
+        const orderId = req.body.orderId
+        const userId = req.body.userId
+        const reason = req.body.reason
+        console.log(orderStatus,orderId,userId,reason);
+        adminHelpers.amendOrderStatus(userId,orderId,orderStatus,reason).then((response) => {
+            res.status(200).json(true)
         })
     },
 

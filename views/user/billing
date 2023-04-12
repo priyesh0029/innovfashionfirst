@@ -595,7 +595,7 @@
                     </div> -->
 
 <!-- address-ajax-div-append -->
-<!-- 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
@@ -665,4 +665,27 @@
                             </td>
                         </tr>`).appendTo('#address-view');
     }
-</script> -->
+</script> 
+
+
+<div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-person"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Customer</h6>
+                                    <p class="mb-1">
+                                        <%=response[i].firstname %> <%=response[i].lastname %> <br> <%=response[i].email %> <br> <%=response[i].mobile %>
+                                    </p>
+                                    
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+
+
+
+
+
+
+

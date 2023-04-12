@@ -108,10 +108,7 @@ const productSchema = new mongoose.Schema({
     required: true
   },
 
-  Image: {
-    type: String,
-    required: true
-  },
+  Image: Array,
   product_status: {
     type: Boolean, default: true
   }
@@ -129,51 +126,51 @@ const categorySchema = new mongoose.Schema({
     Men: {
       Topwear: {
         type: [String],
-        // required: true,
+         unique: true,
         uppercase: true
       },
       Bottomwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       },
       Footwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       },
     },
     Women: {
       Topwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       },
       Bottomwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       },
       Footwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       }
     },
     Kids: {
       Topwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       },
       Bottomwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       },
       Footwear: {
         type: [String],
-        // required: true,
+        unique: true,
         uppercase: true
       }
     }
@@ -200,9 +197,25 @@ const cartSchema = new mongoose.Schema({
       }
     }
   ],
-  count: Number,
+  count: {
+    type: Number, 
+    default: 0
+  },
   grand_Total: Number
 
+})
+
+//WishlistSchema
+
+
+const wishlistSchema = new mongoose.Schema({
+
+  userId: ObjectId,
+  product: Array,
+  count: {
+    type: Number, 
+    default: 0
+  }
 })
 
 const addressSchema = new mongoose.Schema({
@@ -261,11 +274,7 @@ const orderSchema = new mongoose.Schema({
     name: String,
     productDetails: Array,
     paymentMethod: String,
-    paymentStatus:  {
-      type: String,
-      enum: ['success', 'pending', 'failed'],
-      default: 'success'
-    },
+    paymentStatus: String,
     totalPrice: Number,
     totalQuantity: Number,
     shippingAddress: {
@@ -283,8 +292,11 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
       type: String,
-      enum: ['pending', 'paid', 'shipped', 'delivered'],
       default: 'pending'
+    },
+    cancellationReason : {
+      type: String,
+      default: null
     }
   }
   ]
@@ -312,6 +324,7 @@ module.exports = {
   product: mongoose.model('product', productSchema),
   categories: mongoose.model('categories', categorySchema),
   cart: mongoose.model('cart', cartSchema),
+  wishlist: mongoose.model('wishlist', wishlistSchema),
   address: mongoose.model('address', addressSchema),
   order : mongoose.model('order', orderSchema),
   admin: mongoose.model('admin', adminSchema)

@@ -223,12 +223,13 @@
                                                             <tr>
                                                                 <th>Orders</th>
                                                                 <th>Date</th>
-                                                                <th>Status</th>
+                                                                <th>order Status</th>
+                                                                <th>payment Status</th>
                                                                 <th>Total</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody id="ordersListId">
                                                             <% for(let i=0;i < response.length;i++){%>
                                                             <tr>
                                                                 <td>order-id: <%=response[i]._id%></td>
@@ -241,16 +242,33 @@
                                                                   <% } %>
                                                                   
                                                                   <%= toDate(response[i].createdAt) %></td>
+                                                                <td><%=response[i].orderStatus%></td>
                                                                 <td><%=response[i].paymentStatus%></td>
                                                                 <td>₹<%=response[i].totalPrice%></td>
                                                                 <td>
                                                                     <a href="/orders?orderId=<%=response[i]._id%>"><button  class="btn btn-small">view</button></a>
-                                                                    <!-- <button type="button" class="btn btn-small" data-toggle="modal" data-target=".bd-example-modal-lg">view</button> -->
+                                                                   
                                                                 </td>
                                                             </tr>
                                                             <%} %>
                                                         </tbody>
                                                     </table>
+                                                </div>
+                                                <div class="pagination-area mt-15 mb-50">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-start">
+                                                            <%for(let i=1;i<=Math.ceil(length/10);i++){%>
+                                                                <li class="page-item" id="pagebtn-<%=i%>"><a class="page-link" href="#"
+                                                                        onclick="OrderPagination(event,'<%=i%>','<%=Math.ceil(length/10)%>')">
+                                                                        <%=i%>
+                                                                    </a></li>
+                                                                <%}%>
+                                                                    <!-- <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                                                <li class="page-item"><a class="page-link" href="#">16</a></li> -->
+                                                                    <li class="page-item"><a class="page-link" href="#"><i
+                                                                                class="material-icons md-chevron_right"></i></a></li>
+                                                        </ul>
+                                                    </nav>
                                                 </div>
                                             </div>
                                         </div>
@@ -619,7 +637,51 @@ aria-hidden="true">
 </div>
     
 <!-- modal-form--end -->
+<script>
+     function OrderPagination(e, pageNo,totalPage) {
+            e.preventDefault()
+            console.log(pageNo);
+            $.ajax({
+                url: '/orderlist',
+                type: 'get',
+                data: {
+                    pageNo
+                },
+                success: function (response) {
+                    console.log("response : ", response);
 
+                    for(let i=1;i<= parseInt(totalPage);i++){
+                        let itemElement = document.getElementById('pagebtn-'+String(i))
+                        itemElement.classList.remove('active');
+                    }
+                    let itemElement = document.getElementById('pagebtn-'+pageNo)
+                    itemElement.classList.add('active');
+
+                    let orderListdiv = ''
+
+                    for (let i = 0; i < response.length; i++) {
+                        const ele = response[i];
+                        orderListdiv += `
+                        
+
+                            <tr>
+                                <td>order-id: ${ele._id}</td>
+                                <td>${ele.createdAt}</td>
+                                <td>${ele.orderStatus}</td>
+                                <td>${ele.paymentStatus}</td>
+                                <td>₹ ${ele.totalPrice}</td>
+                                <td>
+                                    <a href="/orders?orderId=${ele._id}&pageNo=${pageNo}"><button  class="btn btn-small">view</button></a>
+                                </td>
+                            </tr>
+                                                               
+                        `
+                    };
+                    $('#ordersListId').html(orderListdiv)
+                }
+            })
+        }
+</script>
    
 </body>
 

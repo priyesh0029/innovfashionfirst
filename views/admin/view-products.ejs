@@ -32,7 +32,7 @@
                   <tr class="userlistfont">
                     <th class="align-middle " scope="col">No:</th>
                     <th class="align-middle" scope="col">Product Name</th>
-                    <th class="align-middle" scope="col">Description</th>
+                   
                     <th class="align-middle" scope="col">Price</th>
                     <th class="align-middle" scope="col">Quantity</th>
                     <th class="align-middle" scope="col">Size</th>
@@ -52,7 +52,7 @@
                   <tr class="uservaluefont">
                     <td> <%=index+1 %> </td>
                     <td><%= item.product_name %></td> 
-                    <td><%= item.description %></td>
+                    
                     <td><%= item.price %></td>
 
                     <% item.product_details.forEach(function(productDetails) { %>
@@ -60,8 +60,8 @@
                       <td><%= productDetails.size %></td>
                       <td><%= productDetails.color %></td>
                     <% }); %>
-                    <td><%= item.gender %></td>
                     <td><%= item.brand %></td>
+                    <td><%= item.gender %></td>
                     <td><%= item.catagory %></td>
                     <td><%= item.sub_catagory %></td>
                     <%if(item.product_status==true){%>
@@ -75,7 +75,7 @@
 
                     <%}
                       %>
-                    <td><img src="/uploads/<%=item.Image %>" alt="" style="width: 50px;height: 50px"></td>
+                    <td><img src="/uploads/<%=item.Image[0] %>" alt="" style="width: 50px;height: 50px"></td>
 
                     <td><a href = "/admin/edit-products/<%=item._id %>" class="btn btn-success" onclick="return confirm('Do you want to Edit  <%= item.product_name %> ?')">Edit</a></td>
                     

@@ -161,8 +161,7 @@ function validateForm(){
 
   success.innerHTML = "form submitted successfully"
   document.getElementById("name-error").innerHTML = ''
-  phoneError.innerHTML = ''
-  emailError.innerHTML = ''
+  
 
 
   return true

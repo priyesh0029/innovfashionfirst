@@ -22,11 +22,6 @@ genderDropdown.addEventListener('change', () => {
 
 })
 
-
-
-
-
-
 function getSubCat(gender, category1) {
   let subcategory =document.getElementById('subcategory')
   let genderHtml =document.getElementById('gender')
@@ -56,3 +51,4 @@ function getSubCat(gender, category1) {
 
   }
 }
+

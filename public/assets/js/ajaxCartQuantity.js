@@ -1,4 +1,59 @@
+//addWishList
+function addWishlist(e, id, page = undefined) {
+  e.preventDefault()
+  console.log("product id : ", id);
 
+  $.ajax({
+    url: '/postaddtoWishlist',
+    type: 'post',
+    data: {
+      proID: id
+    },
+    success: function (response) {
+      document.getElementById("wishlistCount").innerHTML = response.count;
+      swal({
+        title: "Item added to wishlist!",
+        icon: "success",
+        button: "OK",
+      });
+    }
+  });
+
+}
+
+function addWishlist2(e) {
+  e.preventDefault()
+  swal({
+    title: "Please login to Continue!",
+    button: "OK",
+  });
+}
+
+//deleteWishList
+
+function deleteWishlist(proId) {
+  $.ajax({
+    url: '/postDeleteWishlist',
+    type: 'post',
+    data: {
+      proID: proId
+    },
+    success: function (response) {
+      document.getElementById("wishlistCount").innerHTML = response.wishListCount;
+      swal({
+        title: "Item deleted from wishlist!",
+        icon: "success",
+        button: false,
+      })
+
+      $(document).ready(function () {
+        $('#wishlistViewtable').load(window.location.href + ' #wishlistViewtable');
+      })
+    }
+  });
+}
+
+//addToCart
 function addTocart(id, priceOfitem, page = undefined) {
   console.log(id, priceOfitem);
   swal({
@@ -14,8 +69,6 @@ function addTocart(id, priceOfitem, page = undefined) {
   }
   let subTotal = parseFloat(priceOfitem) * parseInt(quantity)
 
-  console.log("id : ", id, "quantity :", quantity);
-
   $.ajax({
     url: '/postaddcart',
     type: 'GET',
@@ -25,31 +78,54 @@ function addTocart(id, priceOfitem, page = undefined) {
       sub_total: subTotal
     },
     success: function (response) {
-      console.log(response);
-
-      // let product = response.product.find(p => p.product_id == id);
-      // let quantity1 = product.quantity;
-      // console.log(quantity1); 
-
-      // document.getElementById("quantity").innerHTML = quantity1;
+      document.getElementById("cartIconCount").innerHTML = response.count;
     }
   });
 
 }
 
+function addTocart2() {
+  swal({
+    title: "Please login to Continue!",
+    button: "OK",
+  });
+}
+
+//quantity controller
+
+function quantityControl(e, quantity, button) {
+  e.preventDefault()
+  let quantityInner = document.getElementById("quantity").innerHTML
+  quantityInner = parseInt(quantityInner)
+  let qty = parseInt(quantity)
+  if (button == 'qtyup') {
+    if (quantityInner + 1 >= qty) {
+      document.getElementById("quantityUPIcon").style.display = "none";
+      document.getElementById("quantity").innerHTML = String(qty)
+    }
+  } else {
+    if (quantityInner - 1 <= qty) {
+      document.getElementById("quantityUPIcon").style.display = "block";
+    }
+  }
+}
+
 //cart quantity
 
-function cartquantityplus(id, priceOfitem, subtotalOfItems) {
+function cartquantityplus(id, priceOfitem, subtotalOfItems, tot_qty) {
 
   let element = document.getElementById(id);
   let quantity1 = element.innerHTML
-
 
   let price = parseInt(priceOfitem)
   var temp = parseInt(quantity1) + 1
   let total = (price * temp)
   let subTotal = String(total)
   let quantity = String(temp)
+  if (temp-1 >= String(tot_qty)) {
+    document.getElementById(tot_qty).style.display = "none";
+    document.getElementById(element).innerHTML = String(tot_qty)
+  }
 
   $.ajax({
     url: '/postaddcart',
@@ -64,12 +140,13 @@ function cartquantityplus(id, priceOfitem, subtotalOfItems) {
       let product = response.product.find(p => p.product_id == id);
       let quantity2 = product.quantity;
       let subTotal = product.sub_total
-      console.log(quantity2);
 
       document.getElementById(id).innerHTML = String(quantity2)
       document.getElementById(subtotalOfItems).innerHTML = subTotal;
       document.getElementById('subtotal').innerHTML = response.grand_Total;
       document.getElementById('subtotal2').innerHTML = response.grand_Total;
+      document.getElementById("cartIconCount").innerHTML = response.count;
+
 
 
     }
@@ -78,7 +155,7 @@ function cartquantityplus(id, priceOfitem, subtotalOfItems) {
 }
 
 
-function cartquantitydown(id, priceOfitem, subtotalOfItems) {
+function cartquantitydown(id, priceOfitem, subtotalOfItems, tot_qty) {
 
   let element = document.getElementById(id);
   let quantity1 = element.innerHTML
@@ -89,7 +166,9 @@ function cartquantitydown(id, priceOfitem, subtotalOfItems) {
   let total = (price * temp)
   let subTotal = String(total)
   let quantity = String(temp)
-
+  if (temp-1 <= String(tot_qty)) {
+    document.getElementById(tot_qty).style.display = "block";
+  }
 
   $.ajax({
     url: '/postaddcart',
@@ -132,9 +211,9 @@ function deleteProduct(id) {
     },
     success: function (response) {
       console.log(response.status);
-
       if (response.status === true) {
         window.location.reload()
+        document.getElementById("cartIconCount").innerHTML = response.cartCount;
       }
 
 
@@ -143,24 +222,24 @@ function deleteProduct(id) {
 }
 
 
-function addAddress(id) {
-  console.log("addressId of user :", id);
-  $.ajax({
-    url: '/postcheckoutAddress',
-    type: 'POST',
-    data: {
-      addressID: id
-    },
-    success: function (response) {
-      console.log(response);
+// function addAddress(id) {
+//   console.log("addressId of user :", id);
+//   $.ajax({
+//     url: '/postcheckoutAddress',
+//     type: 'POST',
+//     data: {
+//       addressID: id
+//     },
+//     success: function (response) {
+//       console.log(response);
 
-    }
-  });
-}
+//     }
+//   });
+// }
 
-function date() {
-  console.log("haii date");
-}
+// function date() {
+//   console.log("haii date");
+// }
 
 //view address
 
@@ -286,7 +365,7 @@ function viewAddress() {
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer d-flex justify-content-center">
-                                                            <button type="submit" id="submit" onclick="addAddressSwal()" class="btn btn-unique">Save</button>
+                                                            <button type="submit" id="submit" class="btn btn-unique">Save</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -310,14 +389,9 @@ function viewAddress() {
   })
 }
 
-function addAddressSwal(){
-  swal({
-  title: "address added successfully!",
-  button: "OK",
-  });
- }            
 
-function deleteAddress(addressId){
+
+function deleteAddress(addressId) {
   console.log("addressId of user :", addressId);
   $.ajax({
     url: '/deleteAddress',
@@ -329,13 +403,13 @@ function deleteAddress(addressId){
       console.log("response : ", response);
       $(`#${addressId}`).remove()
     }
-    
+
   });
 }
 
 //amend password
 
-function checkPassword(){
+function checkPassword() {
   let oldPassword = document.getElementById("oldpassword").value
   console.log(oldPassword);
   $.ajax({
@@ -345,49 +419,50 @@ function checkPassword(){
       password: oldPassword
     },
     success: function (response) {
-      if(!response.status){
+      if (!response.status) {
         document.getElementById("oldpassword-error").innerHTML = "incorrect password"
-      }else{
+      } else {
         document.getElementById("oldpassword-error").innerHTML = ""
       }
-      
+
     }
-    
+
   });
 }
 
-function confirmPassword($event){
+function confirmPassword($event) {
   $event.preventDefault()
   let newPassword = document.getElementById("npassword").value
   let confirmPassword = document.getElementById("cpassword").value
-  if(newPassword === confirmPassword){
+  if (newPassword === confirmPassword) {
     document.getElementById("cpassword-error").innerHTML = ""
     $.ajax({
       url: '/checkPassword',
       type: 'post',
       data: {
         password: newPassword,
-        cpassword : confirmPassword
+        cpassword: confirmPassword
       },
       success: function (response) {
-          if(response.status){
-            $(document).ready(function(){
-              setTimeout(function(){
-                $('#passwordForm').load(window.location.href + ' #passwordForm' );
-              },0)
-            })
-            passwordSwal()
-            function passwordSwal(){
-              swal({
+        if (response.status) {
+          $(document).ready(function () {
+            setTimeout(function () {
+              $('#passwordForm').load(window.location.href + ' #passwordForm');
+            }, 0)
+          })
+          passwordSwal()
+          function passwordSwal() {
+            swal({
               title: "password changed successfully!",
               button: "OK",
-              });
-             }
+            });
           }
-       }
+        }
+      }
     });
-  }else{
+  } else {
     document.getElementById("cpassword-error").innerHTML = "password mismatch"
   }
 }
+
 

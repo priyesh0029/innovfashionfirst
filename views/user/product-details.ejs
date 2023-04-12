@@ -133,10 +133,16 @@
                                     </div>
                                     <div class="product-extra-link2">
                                         <button type="submit" class="button button-add-to-cart" >Add to cart</button>
-                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                            href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
-                                                class="fi-rs-shuffle"></i></a>
+                                        <% if(locals.headerStatus) {%>
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist(event,'<%= response._id %>')"><i
+                                              class="fi-rs-heart"></i></a>
+                
+                                            <%} else {%>
+                                              <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist2(event)"><i
+                                                class="fi-rs-heart"></i></a>
+                                              <%} %>
+                                        
+                                        
                                     </div>
                                 </div>
                                 <ul class="product-meta font-xs color-grey mt-50">
@@ -355,37 +361,19 @@
                                         <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                         <!-- MAIN SLIDES -->
                                         <div class="product-image-slider">
+                                            <% for(let i=0;i < response.Image.length;i++){%>
                                             <figure class="border-radius-10">
-                                                <img src="/uploads/<%= response.Image%>" alt="product image">
+                                                <img src="/uploads/<%= response.Image[i]%>" alt="product image">
                                             </figure>
-                                            <!-- <figure class="border-radius-10">
-                                                <img src="/assets/imgs/shop/product-16-1.jpg" alt="product image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img src="/assets/imgs/shop/product-16-3.jpg" alt="product image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img src="/assets/imgs/shop/product-16-4.jpg" alt="product image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img src="/assets/imgs/shop/product-16-5.jpg" alt="product image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img src="/assets/imgs/shop/product-16-6.jpg" alt="product image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img src="/assets/imgs/shop/product-16-7.jpg" alt="product image">
-                                            </figure> -->
+                                         
+                                            <%} %>
                                         </div>
                                         <!-- THUMBNAILS -->
                                         <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <div><img src="/assets/imgs/shop/thumbnail-3.jpg" alt="product image"></div>
-                                            <div><img src="/assets/imgs/shop/thumbnail-4.jpg" alt="product image"></div>
-                                            <div><img src="/assets/imgs/shop/thumbnail-5.jpg" alt="product image"></div>
-                                            <div><img src="/assets/imgs/shop/thumbnail-6.jpg" alt="product image"></div>
-                                            <div><img src="/assets/imgs/shop/thumbnail-7.jpg" alt="product image"></div>
-                                            <div><img src="/assets/imgs/shop/thumbnail-8.jpg" alt="product image"></div>
-                                            <div><img src="/assets/imgs/shop/thumbnail-9.jpg" alt="product image"></div>
+                                            <% for(let i=0;i < response.Image.length;i++){%>
+                                             <div><img src="/uploads/<%= response.Image[i]%>" alt="product image"></div>
+                                            <%} %>
+                                          
                                         </div>
                                     </div>
                                     <!-- End Gallery -->
@@ -459,35 +447,60 @@
                                         
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                         <div class="detail-extralink">
+                                            <%if(response.product_details[0].quantity !== 0){%>
                                             <div class="detail-qty border radius">
-                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <a href="#" class="qty-down" onclick="quantityControl(event,'<%=response.product_details[0].quantity %>')"><i class="fi-rs-angle-small-down"></i></a>
                                                 <span class="qty-val" id="quantity">1</span>
-                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                                <a href="#" class="qty-up" id="quantityUPIcon" onclick="quantityControl(event,'<%=response.product_details[0].quantity %>','qtyup')"><i class="fi-rs-angle-small-up"></i></a>
                                             </div>
-                                            
+                                            <%}%>
                                             <div class="product-extra-link2">
                                                 <% if(locals.headerStatus)
                                                     {%>
-                                                        <button type="submit" class="button button-add-to-cart"  onclick="addTocart('<%=response._id%>','<%= response.price%>','productPage')" >Add to cart</button>
+                                                        <%if(response.product_details[0].quantity === 0){%>
+                                                                <button type="submit" class="button button-add-to-cart btn disabled">Add to cart</button>
+                                                        <%}else{%>
+                                                                <button type="submit" id="quantityUP" class="button button-add-to-cart"  onclick=" addTocart('<%=response._id%>','<%= response.price%>','productPage') " >Add to cart</button>
+                                                            
+                                                            <%}%>
                                                     <%} else
                                                     {%>
                                                         <button type="submit" class="button button-add-to-cart"  onclick="addTocart2()" >Add to cart</button>
                                                     <%} 
                                                 %>
                                                
-                                                    
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <% if(locals.headerStatus) {%>
+                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist(event,'<%= response._id %>')"><i
+                                                      class="fi-rs-heart"></i></a>
+                        
+                                                    <%} else {%>
+                                                      <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist2(event)"><i
+                                                        class="fi-rs-heart"></i></a>
+                                                      <%} %>
+                                               
+                                               
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#"
                                                     rel="tag"><%= response.gender%></a>, <a href="#" rel="tag">Dress</a> </li>
-                                            <li>Availability:<span class="in-stock text-success ml-5"><%= item.quantity%> Items In
-                                                    Stock</span></li>
+                                                    <% if(item.quantity < 5 && item.quantity>0 )
+                                                    {%>
+                                                        <li>Availability:<span class="in-stock text-danger ml-5"> hurry up! only <%= item.quantity%> items In
+                                                            Stock</span></li>
+                                                    <%} else if(item.quantity === 0)
+                                                    {%>
+                                                        <li>Availability:<span class="in-stock text-danger ml-5"> Out of
+                                                            Stock</span></li>
+                                                    <%} 
+                                                    else
+                                                    {%>
+                                                        <li>Availability:<span class="in-stock text-success ml-5">In
+                                                            Stock</span></li>
+                                                    <%} 
+                                                %>
+                                            
                                         </ul>
                                     </div>
                                     

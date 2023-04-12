@@ -52,6 +52,14 @@ router.get('/unlist-product/:id',admincontroller.getAdminUnlistProducts)
 
 router.get('/list-product/:id',admincontroller.getAdminlistProducts)
 
+//orders
+router.get('/orders',admincontroller.getOrderDetails)
+
+router.get('/order-proDetails',admincontroller.orderProDetails)
+
+router.post('/amendOrderStatus',admincontroller.amendOrderStatus)
+
+
 
 //logout
 

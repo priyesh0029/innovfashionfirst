@@ -1,3 +1,4 @@
+<% if (adminStatus==true) { %>
 <header class="main-header navbar" style="justify-content: space-around;padding: 0.5rem 2rem;">
   <div class="col-search">
     <form class="searchform">
@@ -16,10 +17,10 @@
     </form>
   </div>
   <div class="col-nav">
-    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
+    <!-- <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
       <i class="material-icons md-apps"></i>
-    </button>
-    <ul class="nav">
+    </button> -->
+    <!-- <ul class="nav">
       <li class="nav-item">
         <a class="nav-link btn-icon" href="#">
           <i class="material-icons md-notifications animation-shake"></i>
@@ -33,8 +34,8 @@
       </li>
       <li class="nav-item">
         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-      </li>
-      <li class="dropdown nav-item">
+      </li> -->
+      <!-- <li class="dropdown nav-item">
         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i
             class="material-icons md-public"></i></a>
         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
@@ -43,12 +44,12 @@
           <a class="dropdown-item" href="#"><img src="/admin-assets/imgs/theme/flag-jp.png" alt="Français" />日本語</a>
           <a class="dropdown-item" href="#"><img src="/admin-assets/imgs/theme/flag-cn.png" alt="Français" />中国人</a>
         </div>
-      </li>
-      <% if (adminStatus==true) { %>
+      </li> -->
 
         <li class="dropdown nav-item">
           <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">
-            <img class="img-xs rounded-circle" src="/admin-assets/imgs/people/avatar2.jpg" alt="User" /></a>
+            <img class="img-xs rounded-circle" src="/admin-assets/imgs/people/avatar2.jpg" alt="admin" /></a>
+            <p style=" margin: -3em 0em 1em 51px;">Admin</p>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
             <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Profile</a>
             <div class="dropdown-divider"></div>
@@ -57,12 +58,9 @@
 
           </div>
 
-          <%} else { %>
-            Account
-
-            <% } %>
-
+          
         </li>
     </ul>
   </div>
 </header>
+<%} %>

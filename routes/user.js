@@ -23,8 +23,17 @@ router.post('/otpverify',controller.postOtpverify)
     
 
     router.get('/shop',controller.getUserShop)
+    //subCatFilter-start
+    router.post('/subCatFilter',controller.subCatFilter)
+    //subCatFilter-end
  
     router.get('/product-details/:id',controller.getproductDetails)
+
+    router.get('/wishlist',userauths.userAuth,controller.getWishlist)
+
+    router.post('/postaddtoWishlist',userauths.userAuth,controller.ajaxAddtoWishlist)
+
+    router.post('/postDeleteWishlist',userauths.userAuth,controller.ajaxDeleteWishlist)
 
     router.get('/cart',userauths.userAuth,controller.userCart)
 
@@ -42,11 +51,19 @@ router.post('/otpverify',controller.postOtpverify)
 
     router.get('/deleteAddress',userauths.userAuth,controller.postDeleteAddress)
     
-    router.post('/postcheckoutAddress',userauths.userAuth,controller.checkoutAddress)
+    // router.post('/postcheckoutAddress',userauths.userAuth,controller.checkoutAddress)
 
     router.post('/placeOrder',userauths.userAuth,controller.placeOrder)
+
+    router.post('/verify-payment',userauths.userAuth,controller.verifyPayment)
+
+    router.get('/orderLandingPage',userauths.userAuth,controller.orderLandinPage)
+
+    router.get('/orderlist',userauths.userAuth,controller.orderlist)
     
     router.get('/orders',userauths.userAuth,controller.orders)
+
+    router.post('/orderCancellation',userauths.userAuth,controller.orderCancellation)
 
     router.get('/viewAddress',userauths.userAuth,controller.viewAddress)
 

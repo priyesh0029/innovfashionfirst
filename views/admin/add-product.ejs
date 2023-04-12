@@ -72,9 +72,21 @@
           <label for="">Brand</label>
           <input type="text" name="brand" class="form-control" />
           
-          <img src="" alt="" style="width:100px;height:auto" id="imageEdit" class="mt-3 mb-3">
+          <img src="" alt="" style="width:100px;height:auto" id="imageEdit1" class="mt-3 mb-3">
           <label for="">Image</label>
-          <input type="file" name="Image" class="form-control" onchange="changeImage(event)"/>
+          <input type="file" name="Image" class="form-control" onchange="changeImage1(event)"/>
+          
+          <img src="" alt="" style="width:100px;height:auto" id="imageEdit2" class="mt-3 mb-3">
+          <label for="">Image</label>
+          <input type="file" name="Image" class="form-control" onchange="changeImage2(event)"/>
+
+          <img src="" alt="" style="width:100px;height:auto" id="imageEdit3" class="mt-3 mb-3">
+          <label for="">Image</label>
+          <input type="file" name="Image" class="form-control" onchange="changeImage3(event)"/>
+
+          <img src="" alt="" style="width:100px;height:auto" id="imageEdit4" class="mt-3 mb-3">
+          <label for="">Image</label>
+          <input type="file" name="Image" class="form-control" onchange="changeImage4(event)"/>
 
           <button type="submit" class="btn btn-success mt-4 mb-4">Submit</button>
         </form>
@@ -84,9 +96,24 @@
 </section>
 
 <script>
-  function changeImage(events)
+  function changeImage1(events)
   {
-    document.getElementById('imageEdit').src = URL.createObjectURL(events.target.files[0])
+    document.getElementById('imageEdit1').src = URL.createObjectURL(events.target.files[0])
+  }
+
+  function changeImage2(events)
+  {
+    document.getElementById('imageEdit2').src = URL.createObjectURL(events.target.files[0])
+  }
+
+  function changeImage3(events)
+  {
+    document.getElementById('imageEdit3').src = URL.createObjectURL(events.target.files[0])
+  }
+
+  function changeImage4(events)
+  {
+    document.getElementById('imageEdit4').src = URL.createObjectURL(events.target.files[0])
   }
 </script>
 

@@ -236,7 +236,7 @@
                 <!-- billing address starting-->
 
                 <div class="row">
-                    <form action="/placeOrder?userId=<%=cart.userId%>" method="post" class="d-flex">
+                    <div id="checkOutForm" class="d-flex">
                         <div class="col-md-6 me-3">
                             <div class="order_review">
                                 <div class="mb-20">
@@ -250,7 +250,7 @@
                                                 <% for(let i=0;i < addressCount;i++){%>
                                                     <tr>
                                                         <td class="mb-5 d-flex">
-                                                            <div><input type="radio" name="addressId" value="<%=userAddress.address[i]._id%>">
+                                                            <div><input type="radio" name="addressId" value="<%=userAddress.address[i]._id%>" id="radioAddress" checked>
                                                             </div>
                                                             <ul class="text-start mt-15 ms-2 ">
 
@@ -299,6 +299,7 @@
 
                                         <button type="button" class="btn btn-small btn-rounded mb-4" data-toggle="modal"
                                             data-target="#modalContactForm">Add New Address</button>
+                                            <span id="radioAddressError"></span>
                                     </div>
 
                                     <!-- modal-end -->
@@ -330,7 +331,7 @@
                                             <% for(let i=0;i < count;i++){%>
                                                 <tr>
                                                     <td class="image product-thumbnail"><img
-                                                            src="/uploads/<%= cart.product[i].product_id.Image%>"
+                                                            src="/uploads/<%= cart.product[i].product_id.Image[0]%>"
                                                             alt="#">
                                                     </td>
                                                     <td>
@@ -371,7 +372,7 @@
                                     <div class="payment_option">
                                         <div class="custome-radio">
                                             <input class="form-check-input" required="" type="radio"
-                                                name="payment_option" id="exampleRadios3" value="COD(cash on delivery)" checked>
+                                                name="payment_option" id="exampleRadios3" value="COD" checked>
                                             <label class="form-check-label" for="exampleRadios3"
                                                 data-bs-toggle="collapse" data-target="#bankTranfer"
                                                 aria-controls="bankTranfer">COD(cash on delivery)</label>
@@ -408,11 +409,11 @@
                                 </div>
                                 <!-- <a href="/placeOrder?userId=<%=cart.userId%>&grand_"
                                 class="btn btn-fill-out btn-block mt-30">Place Order</a> -->
-                                <button type="submit" class="btn btn-fill-out btn-block mt-30">Place
+                                <button class="btn btn-fill-out btn-block mt-30" onclick="placeOrder()" id="rzp-button1">Place
                                     Order</button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
     </section>
@@ -635,4 +636,119 @@
     </div>
 
 </body>
+ <script>
+function placeOrder(){
+    const radioGroup = document.getElementsByName("payment_option");
+        let payment_option;
+        for (let i = 0; i < radioGroup.length; i++) {
+        if (radioGroup[i].checked) {
+            payment_option = radioGroup[i].value;
+        break;
+        }
+    }
+    const radioGroup2 = document.getElementsByName("addressId");
+        let addressId;
+        for (let i = 0; i < radioGroup2.length; i++) {
+        if (radioGroup2[i].checked) {
+            addressId = radioGroup2[i].value;
+        break;
+        }
+    }
+    console.log(payment_option,addressId);
 
+    $.ajax({
+        url :"/placeOrder",
+        type :"post",
+        data : {
+            addressId,
+            payment_option
+        },
+        success :(response)=>{
+        console.log(response);
+        if(response.userCart===false){
+            location.href = "/"
+        }
+        if(response.CodStatus){
+            location.href = "/orderLandingPage"
+        }else if(response.Razorstatus){
+            getRazorpay(response)
+        }
+        },
+        error : (response)=>{
+        console.log(response);
+            location.href = "/"
+        }
+        })
+
+    
+}
+
+const getRazorpay = (order) => {
+        var options = {
+            "key": "rzp_test_wdO1BDjnHakmYI", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Acme Corp", //your business name
+            "description": "Test Transaction",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response) {
+                verifyPayment(order, response);
+            },
+            "prefill": {
+                "name": "Gaurav Kumar", //your customer's name
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.on('payment.failed', function (response) {
+            // alert(response.error.code);
+            // alert(response.error.description);
+            // alert(response.error.source);
+            // alert(response.error.step);
+            // alert(response.error.reason);
+            // alert(response.error.metadata.order_id);
+            // alert(response.error.metadata.payment_id);
+        });
+        // document.getElementById('rzp-button1').onclick = function (e) {
+        //     e.preventDefault();
+        //     rzp1.open();
+        // }
+         rzp1.open();
+
+
+    }
+
+    const verifyPayment = (payment, order) => {
+        console.log("paymentand order : ",payment,order);
+        $.ajax({
+            type: "post",
+            url: '/verify-payment',
+            data: {
+                payment,
+                order
+            },
+            success: (response) => {
+                if (response.status) {
+                    console.log(response)
+                    location.href = '/orderLandingPage'
+
+                } else {
+                    // $('#failureModal').modal('show');
+                    // setTimeout(() => {
+                    //     location.href = '/proceed-to-checkout'
+                    // }, 3000)
+                    alert("payment failed")
+                }
+            }
+        })
+    }
+
+
+ </script>
