@@ -9,14 +9,19 @@ var headerStatus, loginStatus, user, mobile
 module.exports = {
 
     getHome: (req, res) => {
-        if (req.session.user != null) {
-            user = req.session.user.username
-            let cartCount = req.session.user.cartCount
-            let wishListCount = req.session.user.wishListCount
-            res.render('user/user', { headerStatus: true, user, cartCount, wishListCount });
-        } else {
-            res.render('user/user', { headerStatus: false });
-        }
+        userhelpers.subCatFilter(null,null,null, 'featured','newAdded').then((response) => {
+            
+            if (req.session.user != null) {
+                user = req.session.user.username
+                let cartCount = req.session.user.cartCount
+                let wishListCount = req.session.user.wishListCount
+                console.log("getHOme response : ",response);
+                res.render('user/user', { headerStatus: true, user, cartCount, wishListCount });
+            } else {
+                console.log("getHOme response : ",response.newAdded,"response.newAdded : ",response.newAdded);
+                res.render('user/user', { headerStatus: false });
+            }
+        })
 
     },
 
@@ -252,6 +257,7 @@ module.exports = {
 
         let quantity = parseInt(req.query.quantity)
         let proID = req.query.proID
+        let unitPrice = parseInt(req.query.unitPrice)
         let subTotal = parseInt(req.query.sub_total)
 
 
@@ -259,7 +265,7 @@ module.exports = {
         console.log("req.query : ", quantity, proID, subTotal);
         console.log("req.session.user : ", req.session.user);
 
-        userhelpers.createUserCart(proID, quantity, subTotal, email).then((response) => {
+        userhelpers.createUserCart(proID, quantity,unitPrice,subTotal, email).then((response) => {
             console.log("response.cartCount : ", response);
             req.session.user.cartCount = response.count
 
@@ -304,6 +310,7 @@ module.exports = {
                 let cart = response.cart
                 let userAddress = response.address
                 let addressCount = response.addressCount
+                let walletAmount = response.wallet
                 let grand_Total = 0
                 for (let i = 0; i < response.count; i++) {
                     grand_Total += response.cart.product[i].sub_total
@@ -311,7 +318,7 @@ module.exports = {
                 console.log(" product_count : ", response.count);
                 console.log("first product_name : ", cart.product[0].product_id._id);
 
-                res.render('user/checkOut', { headerStatus: true, user, cartCount, count, cart, grand_Total, wishListCount, userAddress, addressCount })
+                res.render('user/checkOut', { headerStatus: true, user, cartCount, count, cart, grand_Total, wishListCount, userAddress, addressCount,walletAmount })
             }
         })
     },
@@ -326,7 +333,7 @@ module.exports = {
                 let length = response.orderDetailsLength
                 let pageNo = response.pageNo
                 response = response.orderDetails
-                res.render('user/userProfile', { headerStatus: true, user, cartCount, wishListCount, response,length })
+                res.render('user/userProfile', { headerStatus: true, user, cartCount, wishListCount, response, length })
             }
         })
     },
@@ -335,20 +342,20 @@ module.exports = {
         let cartCount = req.session.user.cartCount
         let wishListCount = req.session.user.wishListCount
         let pageNo = req.query.pageNo
-        console.log("pageNo1 :",pageNo);
-       
-        userhelpers.userProfile(email,pageNo).then((response) => {
+        console.log("pageNo1 :", pageNo);
+
+        userhelpers.userProfile(email, pageNo).then((response) => {
             let length = response.orderDetailsLength
             let pageNo = response.pageNo
             response = response.orderDetails
-            console.log("length and response : ",length,"response : ",response); 
-           
-            if(pageNo !== undefined){
-                console.log("pageNo : ",pageNo);
+            console.log("length and response : ", length, "response : ", response);
+
+            if (pageNo !== undefined) {
+                console.log("pageNo : ", pageNo);
                 res.status(200).json(response)
-            }else{
-                res.render('user/viewOrders', { headerStatus: true, user, cartCount, wishListCount,response,length })
-             }
+            } else {
+                res.render('user/viewOrders', { headerStatus: true, user, cartCount, wishListCount, response, length })
+            }
 
         })
     },
@@ -357,11 +364,11 @@ module.exports = {
         let cartCount = req.session.user.cartCount
         let wishListCount = req.session.user.wishListCount
         let pageNo = req.query.pageNo
-        console.log("pageNo : ",pageNo);
-        userhelpers.userProfile(email,pageNo).then((response) => {
+        console.log("pageNo : ", pageNo);
+        userhelpers.userProfile(email, pageNo).then((response) => {
             if (response !== null) {
                 let orderId = req.query.orderId
-                console.log("orderId : ",orderId);
+                console.log("orderId : ", orderId);
                 orderId = ObjectId(orderId)
                 const order = response.orderDetails.find(obj => obj._id.equals(orderId));
                 console.log("orderhistory after find js method : ", order);
@@ -373,18 +380,33 @@ module.exports = {
 
     orderCancellation: (req, res) => {
         const email = req.session.user.email
-        console.log("orderCancellation : ", req.body.reason);
-        userhelpers.orderCancellation(email, req.body.orderId, req.body.reason).then(() => {
-            console.log('here');
-            let response = true
-            res.status(200).json({ 'ok': response })
-        })
+        console.log("req.body.orderStatus : ",req.body.orderStatus);
+        userhelpers.orderCancellation(email, req.body.orderId, req.body.reason,req.body.orderStatus)
+            .then((response) => {
+                if (response.paymentMethod !== 'COD' && response.paymentStatus === 'success') {
+
+                    userhelpers.walletUpdate(response).then(() => {
+
+                        response = true
+                        res.status(200).json({ 'ok': response })
+                    }).catch((error) => {
+                        console.log("error wallet :",error);
+                        res.status(400).json({"err2":error})
+                    })
+                } else {
+                    response = true
+                    res.status(200).json({ 'ok': response })
+                }
+            }).catch((error) => {
+                console.log("error hrehejer :",error);
+                res.status(400).json({"err1":error})
+            })
     },
 
     viewAddress: (req, res) => {
         const email = req.session.user.email
         userhelpers.getuserAddress(email).then((response) => {
-            response = response.address
+            response = response.address 
             res.json(response)
         })
     },
@@ -443,6 +465,17 @@ module.exports = {
         })
     },
 
+    viewWallet : (req, res) => {
+
+        const email = req.session.user.email
+        console.log(email);
+        userhelpers.viewWallet(email).then((response) => {
+            res.status(200).json(response)
+        }).catch((error)=>{
+            res.status(400).json(error)
+        })
+    },
+
     // checkoutAddress : (req,res)=>{
     //     console.log("address : ",req.body.addressID);
     //     const email = req.session.user.email
@@ -470,6 +503,13 @@ module.exports = {
                     order.Razorstatus = true
                     console.log("razorpay response : ", order);
                     res.json(order)
+                } else if(payment_option === 'Wallet'){
+                    userhelpers.getWalletpay(response).then((response)=>{
+                        res.status(200).json({ WalletStatus: true })
+                    }).catch((response)=>{
+                        console.log(response);
+                        res.status(400).json(response)
+                    })
                 }
             }
 

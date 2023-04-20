@@ -1,0 +1,73 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+
+</head>
+
+<body>
+
+
+
+    <section class="">
+        <div class="container d-flex justify-content-center">
+            <div class="row w-75 mt-5">
+                <div class="col-md-12">
+                    <h2 class="text-center">Add Offers</h2>
+                    <form action="/admin/offers" method="post">
+
+                        <label for="">Gender</label>
+                        <select class="form-select" name="gender" id="gender" required>
+                            <option></option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Kids">Kids</option>
+
+                        </select>
+
+                        <label for="">Category</label>
+                        <select class="form-select" name="category" id="category" required>
+                            <option></option>
+                            <option value="Topwear">Topwear</option>
+                            <option value="Bottomwear">Bottomwear</option>
+                            <option value="Footwear">Footwear</option>
+
+                        </select>
+
+                        <label for="">sub-category</label>
+                        <select class="form-select" name="subcategory" id="subcategory" required>
+
+                        </select>
+
+                        <label for="">Offer percentage</label>
+                        <input type="number" name="offerPercentage" class="form-control" onclick="offerExist()"
+                            required />
+
+                        <label for="">Expiry date</label>
+                        <input type="date" name="endDate" class="form-control" required />
+
+                        <button type="submit" class="btn btn-success mt-4 mb-4">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+
+    </script>
+
+    <script src="/admin-assets/js/ajaxgetsubcat.js"></script>
+
+
+</body>
+<script>
+    
+    
+</script>

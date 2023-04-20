@@ -34,6 +34,7 @@
                     <th class="align-middle" scope="col">Product Name</th>
                    
                     <th class="align-middle" scope="col">Price</th>
+                    <th class="align-middle" scope="col">Discount price</th>
                     <th class="align-middle" scope="col">Quantity</th>
                     <th class="align-middle" scope="col">Size</th>
                     <th class="align-middle" scope="col">Color</th>
@@ -51,9 +52,15 @@
                   <% response.forEach(function(item,index) { %>
                   <tr class="uservaluefont">
                     <td> <%=index+1 %> </td>
-                    <td><%= item.product_name %></td> 
+                    <td><%= item.product_name %></td>
                     
-                    <td><%= item.price %></td>
+                    <td>₹<%= item.price %></td>
+                    <%if(item.discountPrice){%>
+
+                      <td>₹<%= item.discountPrice %></td>
+                      <%}else{%>
+                        <td class="text-center"> - </td>
+                        <%}%>
 
                     <% item.product_details.forEach(function(productDetails) { %>
                       <td><%= productDetails.quantity %></td>

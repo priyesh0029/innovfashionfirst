@@ -41,8 +41,15 @@
                             
                             <!-- Button trigger modal -->
                             <% if(order.orderStatus === "cancelled"){%>
-                                <p class="badge rounded-pill alert-danger text-danger"> <%=order.orderStatus %></p><br>
+                                <p class="badge rounded-pill alert-danger text-danger">Order Status: <%=order.orderStatus %></p><br>
                                 <p>cancellation reason : <%=order.cancellationReason%> </p>
+                              <%}else if(order.orderStatus === "Delivered"){%>
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+                                    Return order
+                                </button>
+                              <%}else if(order.orderStatus === "returned"){%>
+                                <p class="badge rounded-pill alert-success text-success">Order Status: <%=order.orderStatus %></p><br>
+                                <p>return reason : <%=order.returnedReason%> </p>
                               <%}else{%>
 
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
@@ -94,7 +101,7 @@
                                                     <div class="info"> <%=order.products[j].sub_catagory %> <%=order.products[j].color[j] %>, <%=order.products[j].size %> size[j] </div>
                                                 </a>
                                             </td>
-                                            <td> ₹ <%=order.products[j].price %></td>
+                                            <td> ₹ <%=order.products[j].unitPrice[j] %></td>
                                             <td> <%=order.products[j].quantity[j] %> </td>
                                             <td class="text-end"> ₹<%=order.products[j].subTotal[j] %> </td>
                                         </tr>
@@ -147,8 +154,17 @@
                                 </dl>
                                 <dl class="dlist">
                                     <dt>Payment Status :</dt>
-                                    <dd>
-                                        <span class="badge rounded-pill alert-success text-success"><%=order.paymentStatus %></span>
+                                    <dd  id="paymentStatusID">
+                                        <% if(order.orderStatus === "cancelled" || order.orderStatus === "returned" && !order.refundStatus && order.paymentStatus === "pending" || 
+                                        order.paymentMethod === "COD"){%>
+                                            <span></span>
+                                            <%}else if(order.orderStatus === "returned" && order.refundStatus){%>
+                                                <span  class="badge rounded-pill alert-success text-success">Refunded</span>
+                                                <%}else if(order.orderStatus === "cancelled" && !order.refundStatus ){%>
+                                                <span class="badge rounded-pill alert-danger text-danger">Refund failed</span>
+                                                <%}else{%>
+                                        <span  class="badge rounded-pill alert-success text-success"><%=order.paymentStatus %></span>
+                                        <%} %>
                                     </dd>
                                 </dl>
                             </div>
@@ -165,7 +181,12 @@
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Reason for order cancellation</h5>
+                        <%if(order.orderStatus === "Delivered"){%>
+                            <h5 class="modal-title" id="exampleModalLabel">Reason for order Return</h5>
+                          <%}else{%>
+                            <h5 class="modal-title" id="exampleModalLabel">Reason for order cancellation</h5>
+                        <%} %>
+                    
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -214,17 +235,23 @@
                           </div>
             
                           <div class="modal-footer">
-                          <button class="btn btn-primary" data-dismiss="modal" onclick="orderCancellation(event,'<%=order._id%>')" >submit</button>
+                            <%if(order.orderStatus === "Delivered"){%>
+                                <button class="btn btn-primary" data-dismiss="modal" onclick="orderCancellation(event,'<%=order._id%>','return')" >submit</button>
+                              <%}else{%>
+                                <button class="btn btn-primary" data-dismiss="modal" onclick="orderCancellation(event,'<%=order._id%>')" >submit</button>
+                            <%} %>
                           </div>
                     </form>
                 </div>
                 </div>
             </div>
        <!-- modal-order-cancellation-end -->
+
+      
        <script>
-         function orderCancellation(e,orderId){
+         function orderCancellation(e,orderId,orderStatus=null){
              e.preventDefault()
-            console.log(orderId);
+            console.log("orderStatus : ",orderStatus);
             const form = $('#orderCancellationForm').serializeArray()
             console.log("form :",form);
             $.ajax({
@@ -232,17 +259,57 @@
         type: 'post',
         data: {
             orderId,
-            reason:form[0].value
+            reason:form[0].value,
+            orderStatus
         },
         success: function (response) {
             console.log("success1");
             if(response.ok){
+                if(orderStatus!==null){
+                    swal({
+                    title: "Order Returned Successfully!",
+                    text: "The refund amound will be credited back to your InfoFashion wallet shortly..!",
+                    icon: "success",
+                    });  
+                }else{
+
+                    swal({
+                        title: "Order cancelled!",
+                        text: "The refund amound will be credited back to your InfoFashion wallet shortly..!",
+                        icon: "success",
+                        });
+                }
                 $(document).ready(function(){
               setTimeout(function(){
                 $('#orderStatusAmendingId').load(window.location.href + ' #orderStatusAmendingId' );
                 $('#orderStausDownId').load(window.location.href + ' #orderStausDownId' );
+                $('#paymentStatusID').load(window.location.href + ' #paymentStatusID' );
               },0)
             })
+            }
+        },
+        error : function(err){
+              console.log("error err : ",err);
+            if(err.responseJSON.err1){
+                swal({
+                      title: err.responseJSON.err1,
+                      icon: "warning",
+                      });
+            }else if(err.responseJSON.err2){
+
+                swal({
+                      title: "Order cancelled!",
+                      text: err.responseJSON.err2,
+                      icon: "warning",
+                      });
+                      $(document).ready(function(){
+                setTimeout(function(){
+                  $('#orderStatusAmendingId').load(window.location.href + ' #orderStatusAmendingId' );
+                  $('#orderStausDownId').load(window.location.href + ' #orderStausDownId' );
+                  $('#paymentStatusID').load(window.location.href + ' #paymentStatusID' );
+                },0)
+               
+              })
             }
         }
       }); 

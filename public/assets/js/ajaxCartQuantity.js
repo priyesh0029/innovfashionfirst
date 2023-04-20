@@ -43,7 +43,7 @@ function deleteWishlist(proId) {
       swal({
         title: "Item deleted from wishlist!",
         icon: "success",
-        button: false,
+        button: "OK",
       })
 
       $(document).ready(function () {
@@ -75,6 +75,7 @@ function addTocart(id, priceOfitem, page = undefined) {
     data: {
       proID: id,
       quantity: quantity,
+      unitPrice : priceOfitem,
       sub_total: subTotal
     },
     success: function (response) {

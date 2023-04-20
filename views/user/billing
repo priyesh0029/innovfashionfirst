@@ -686,6 +686,142 @@
 
 
 
+<!-- chat_gpt-chartcode-start -->
 
+const yearlySalesgraph = await admin.order.aggregate([
+    {
+        $unwind: {
+            path: "$orders",
+        },
+    },
+    {
+        $match: {
+            "orders.orderStatus": "Delivered",
+            "orders.createdAt": {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            },
+        },
+    },
+    {
+        $group: {
+            _id: {
+                monthSort: {
+                    $month: "$orders.createdAt",
+                },
+            },
+            totalSales: {
+                $sum: {
+                    $ifNull: ["$orders.totalPrice", 0]
+                },
+            },
+        },
+    },
+    {
+        $facet: {
+            byMonth: [
+                {
+                    $group: {
+                        _id: "$_id",
+                        totalSales: { $first: "$totalSales" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        monthSort: "$_id.monthSort",
+                        totalSales: "$totalSales"
+                    }
+                }
+            ],
+            bySequence: [
+                {
+                    $project: {
+                        monthSort: { $range: [1, 13] }
+                    }
+                },
+                {
+                    $unwind: "$monthSort"
+                },
+                {
+                    $project: {
+                        monthSort: {
+                            $cond: {
+                                if: { $eq: ["$monthSort", 13] },
+                                then: 1,
+                                else: "$monthSort"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        $project: {
+            months: {
+                $map: {
+                    input: {
+                        $setDifference: [
+                            "$bySequence.monthSort",
+                            "$byMonth.monthSort"
+                        ]
+                    },
+                    in: {
+                        $arrayElemAt: [
+                            [
+                                "",
+                                "Jan",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "May",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Oct",
+                                "Nov",
+                                "Dec"
+                            ],
+                            "$$this"
+                        ]
+                    }
+                }
+            },
+            salesByMonth: { $concatArrays: ["$byMonth", "$bySequence"] }
+        }
+    },
+    {
+        $unwind: "$salesByMonth"
+    },
+    {
+        $group: {
+            _id: "$salesByMonth.monthSort",
+            totalSales: {
+                $sum: "$salesByMonth.totalSales"
+            }
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            months: "$_id",
+            totalSales: 1
+        }
+    },
+    {
+        $sort: {
+            months: 1
+        }
+    }
+])
 
+<!-- chat_gpt-chartcode-start -->
 
+ <div class=" ${ele.discountPrice} ? product-price : old-price;">
+                                <span>
+                                  ₹ ${productPrice}
+                                </span>
+                                <span class="old-price">₹ ${ele.price}</span>
+                              </div>

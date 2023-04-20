@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { response } = require('express');
 const { product } = require('../models/connection');
 const ObjectId = require('mongodb').ObjectId
+const moment = require("moment/moment");
 
 
 module.exports = {
@@ -19,7 +20,7 @@ module.exports = {
             try {
                 email = adminData.email
                 adminInfo = await admin.admin.findOne({ email })
-                 if (adminInfo) {
+                if (adminInfo) {
 
                     bcrypt.compare(adminData.password, adminInfo.Password).then((status) => {
 
@@ -49,6 +50,196 @@ module.exports = {
 
 
 
+        })
+    },
+
+    getAdminDashboard: () => {
+        let date = new Date();
+        let year = moment(date).format('YYYY');
+
+        const startDate = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
+        const endDate = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+
+        console.log("startDate: ", startDate.toISOString());
+        console.log("endDate: ", endDate.toISOString());
+
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                const dashBoard = await admin.order.aggregate([
+                    {
+                        $unwind:
+                        {
+                            path: "$orders",
+                        },
+                    },
+                    {
+                        $match:
+                        {
+                            "orders.orderStatus": "Delivered",
+                            "orders.createdAt": {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate),
+                            },
+                        },
+                    },
+                    {
+                        $project:
+                        {
+                            orders: 1,
+                        },
+                    },
+                    {
+                        $group:
+                        {
+                            _id: null,
+                            totalRevenue: {
+                                $sum: "$orders.totalPrice",
+                            },
+                            orderCount: {
+                                $sum: 1,
+                            },
+                            monthlyEarning: {
+                                $avg: "$orders.totalPrice",
+                            },
+                        },
+                    },
+                    {
+                        $project: {
+                            "totalRevenue": 1,
+                            "orderCount": 1,
+                            monthlyEarning: { $floor: { $divide: ["$totalRevenue", 12] } }
+                        }
+                    }
+                ])
+                const productCount = await admin.product.countDocuments({});
+                console.log("dashBoard : ", dashBoard, productCount);
+
+                const yearlySalesgraph = await admin.order.aggregate([
+                    {
+                        $unwind:
+                        {
+                            path: "$orders",
+                        },
+                    },
+                    {
+                        $match:
+                        {
+                            "orders.orderStatus": "Delivered",
+                            "orders.createdAt": {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate),
+                            },
+                        },
+                    },
+                    {
+                        $group:
+                        {
+                            _id: {
+                                monthSort: {
+                                    $month: "$orders.createdAt",
+                                },
+                            },
+                            totalSales: {
+                                $sum: "$orders.totalPrice",
+                            },
+                        },
+                    },
+                    {
+                        $sort:
+                        {
+                            "_id.monthSort": 1,
+                        },
+                    },
+                    {
+                        $project:
+                        {
+                            _id: 0,
+                            months: {
+                                $arrayElemAt: [
+                                    [
+                                        "",
+                                        "Jan",
+                                        "Feb",
+                                        "Mar",
+                                        "Apr",
+                                        "May",
+                                        "Jun",
+                                        "Jul",
+                                        "Aug",
+                                        "Sep",
+                                        "Oct",
+                                        "Nov",
+                                        "Dec",
+                                    ],
+                                    "$_id.monthSort",
+                                ],
+                            },
+                            totalSales: "$totalSales",
+                        },
+                    },
+                ])
+
+                console.log("yearlysales graph:", yearlySalesgraph);
+
+                const categoryCount = await admin.order.aggregate(
+                    [
+                        {
+                            $unwind:
+
+                            {
+                                path: "$orders",
+                            },
+                        },
+                        {
+                            $match:
+
+                            {
+                                "orders.orderStatus": "Delivered",
+                            },
+                        },
+                        {
+                            $lookup:
+
+                            {
+                                from: "products",
+                                localField:
+                                    "orders.productDetails.product_id",
+                                foreignField: "_id",
+                                as: "products",
+                            },
+                        },
+                        {
+                            $project:
+
+                            {
+                                products: 1,
+                            },
+                        },
+                        {
+                            $unwind:
+
+                            {
+                                path: "$products",
+                            },
+                        },
+                        {
+                            $group:
+
+                            {
+                                _id: "$products.gender",
+                                count: {
+                                    $sum: 1,
+                                },
+                            },
+                        },
+                    ]
+                )
+                console.log("categoryCount : ", categoryCount);
+                resolve({ dashBoard, productCount, yearlySalesgraph, categoryCount })
+            } catch (err) {
+                reject("unable to load Dashboard")
+            }
         })
     },
 
@@ -101,7 +292,142 @@ module.exports = {
         })
     },
 
+    getSalesReport: () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const orderDetails = await admin.order.aggregate([
+                    {
+                        $project: {
+                            "userId": 1,
+                            "orders": 1
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "userId",
+                            foreignField: "_id",
+                            as: "userDetails",
 
+                        },
+
+                    },
+                    {
+                        $unwind: "$orders"
+                    },
+                    {
+                        $unwind: "$userDetails"
+                    },
+                    {
+                        $match: {
+                            "orders.orderStatus": "Delivered"
+                        }
+                    },
+                    {
+                        $project: {
+                            firstname: "$userDetails.firstName",
+                            lastName: "$userDetails.lastName",
+                            email: "$userDetails.email",
+                            phonenumber: "$userDetails.phonenumber",
+                            ordersId: "$orders._id",
+                            productArrayDetails: "$orders.productDetails",
+                            paymentMethod: "$orders.paymentMethod",
+                            paymentStatus: "$orders.paymentStatus",
+                            totalPrice: "$orders.totalPrice",
+                            totalQuantity: "$orders.totalQuantity",
+                            shippingAddress: "$orders.shippingAddress",
+                            status: "$orders.status",
+                            orderStatus: "$orders.orderStatus",
+                            createdAt: "$orders.createdAt",
+                        }
+                    },
+
+                    { $sort: { createdAt: -1 } }
+                ])
+                for (let i = 0; i < orderDetails.length; i++) {
+                    orderDetails[i].createdAt = moment(orderDetails[i].createdAt).format('Do MMMM YYYY');
+                }
+                console.log("orderDetails sales report :", orderDetails);
+                resolve(orderDetails)
+            } catch (err) {
+                console.log(err)
+                reject("unable to show sales reeport")
+            }
+        })
+    },
+
+    getfilteredSalesReport: (dates) => {
+        console.log("dates", dates);
+        let startDate = dates.startDate
+        let endDate = new Date(dates.endDate)
+        endDate.setDate(endDate.getDate() + 1)
+        console.log("endDate startDate : ", endDate, startDate);
+        return new Promise(async (resolve, reject) => {
+            try {
+                const orderDetails = await admin.order.aggregate([
+                    {
+                        $project: {
+                            "userId": 1,
+                            "orders": 1
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "userId",
+                            foreignField: "_id",
+                            as: "userDetails",
+
+                        },
+
+                    },
+                    {
+                        $unwind: "$orders"
+                    },
+                    {
+                        $unwind: "$userDetails"
+                    },
+                    {
+                        $match: {
+                            "orders.orderStatus": "Delivered",
+                            "orders.createdAt": {
+                                $gte: new Date(startDate),
+                                $lte: endDate
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            firstname: "$userDetails.firstName",
+                            lastName: "$userDetails.lastName",
+                            email: "$userDetails.email",
+                            phonenumber: "$userDetails.phonenumber",
+                            ordersId: "$orders._id",
+                            productArrayDetails: "$orders.productDetails",
+                            paymentMethod: "$orders.paymentMethod",
+                            paymentStatus: "$orders.paymentStatus",
+                            totalPrice: "$orders.totalPrice",
+                            totalQuantity: "$orders.totalQuantity",
+                            shippingAddress: "$orders.shippingAddress",
+                            status: "$orders.status",
+                            orderStatus: "$orders.orderStatus",
+                            createdAt: "$orders.createdAt",
+                        }
+                    },
+
+                    { $sort: { createdAt: -1 } }
+                ])
+                for (let i = 0; i < orderDetails.length; i++) {
+                    orderDetails[i].createdAt = moment(orderDetails[i].createdAt).format('Do MMMM YYYY');
+                }
+                console.log("orderDetails sales report filter :", orderDetails);
+                resolve(orderDetails)
+            } catch (err) {
+                console.log(err)
+                reject("unable to show sales report")
+            }
+        })
+    },
 
     //Category---section    
 
@@ -131,10 +457,10 @@ module.exports = {
                     let info2 = await admin.categories.findOneAndUpdate(
                         { _id: info._id, [`category.${gender}.${subcategory}`]: { $nin: [subcategoryname] } },
                         { $push: { [`category.${gender}.${subcategory}`]: subcategoryname } }
-                      );
-                      
+                    );
+
                     console.log("info2 : ", info2);
-                    if(info2 === null){
+                    if (info2 === null) {
                         reject("this category already exist.try another !")
                     }
                 }
@@ -239,6 +565,7 @@ module.exports = {
                     product_name: product.name,
                     description: product.description,
                     price: product.price,
+                    discountPrice: product.discountPrice,
                     product_details: [{
                         quantity: product.quantity,
                         size: product.size,
@@ -356,6 +683,7 @@ module.exports = {
                         product_name: updatedProduct.name,
                         description: updatedProduct.description,
                         price: updatedProduct.price,
+                        discountPrice: updatedProduct.discountPrice,
                         product_details: [{
                             quantity: updatedProduct.quantity,
                             size: updatedProduct.size,
@@ -473,6 +801,10 @@ module.exports = {
 
                     { $sort: { createdAt: -1 } }
                 ])
+                for (let i = 0; i < orderDetails.length; i++) {
+                    orderDetails[i].createdAt = moment(orderDetails[i].createdAt).format('Do MMMM YYYY');
+                }
+
                 console.log("allOrders :", orderDetails);
                 resolve(orderDetails)
             } catch (err) {
@@ -568,6 +900,7 @@ module.exports = {
                             catagory: "$productDetails.catagory",
                             sub_catagory: "$productDetails.sub_catagory",
                             Image: "$productDetails.Image",
+                            product_unitPrice: "$productArrayDetails.perUnitPrice",
                             product_quantity: "$productArrayDetails.quantity",
                             product_subTotal: "$productArrayDetails.sub_total",
                             paymentMethod: 1,
@@ -624,6 +957,7 @@ module.exports = {
                             catagory: 1,
                             sub_catagory: 1,
                             Image: 1,
+                            product_unitPrice:1,
                             product_quantity: 1,
                             product_subTotal: 1,
                             paymentMethod: 1,
@@ -666,6 +1000,7 @@ module.exports = {
                                     catagory: "$catagory",
                                     sub_catagory: "$sub_catagory",
                                     Image: "$Image",
+                                    product_unitPrice :"$product_unitPrice",
                                     product_quantity: "$product_quantity",
                                     product_subTotal: "$product_subTotal"
                                 },
@@ -675,37 +1010,250 @@ module.exports = {
                     }
 
                 ])
-                console.log("orderDetails : ", orderDetails[0].products[0]);
+                for (let i = 0; i < orderDetails.length; i++) {
+                    orderDetails[i].createdAt = moment(orderDetails[i].createdAt).format('MMMM Do YYYY, h:mm:ss a')
+                }
+                console.log("orderDetails admin healper : ", orderDetails);
                 resolve(orderDetails)
             } catch (err) {
                 console.log(err);
             }
         })
     },
-
-    amendOrderStatus: (userId, orderId, orderStatus, reason) => {
+    walletUpdate: (response) => {
+        let userId = response.userId
+        const tranObj = {
+            orderId: response.orderId,
+            amount: response.totalPrice,
+            date: new Date(),
+            type: 'credit'
+        }
+        console.log("wallet helper : ", tranObj, typeof (tranObj.amount), typeof (userId), typeof (tranObj.orderId));
         return new Promise(async (resolve, reject) => {
             try {
-                await admin.order.updateOne({ "userId": ObjectId(userId), "orders._id": ObjectId(orderId) },
-                    { $set: { "orders.$.orderStatus": orderStatus, "orders.$.cancellationReason": reason } })
+                const existingWallet = await admin.wallet.findOne({ "userId": userId });
+                if (existingWallet !== null) {
+                    existingWallet.balance += tranObj.amount;
+                    existingWallet.transactions.push(tranObj); // Add new transaction to array
+                    await existingWallet.save();
 
-                const orderItem = await admin.order.findOne({ "userId": userId, "orders._id": ObjectId(orderId) }, { "orders.$": 1, _id: 0 })
-                console.log("orderItem qauntity increase : ", orderItem);
-                for (let i = 0; i < orderItem.orders[0].productDetails.length; i++) {
-                    const productId = orderItem.orders[0].productDetails[i].product_id;
-                    const quantity = orderItem.orders[0].productDetails[i].quantity
-                    console.log("productId and quantity : ", productId, quantity);
-                    await admin.product.updateOne(
-                        { _id: productId },
-                        { $inc: { "product_details.0.quantity": quantity } }
-                    )
+                } else {
+
+                    const newWallet = new admin.wallet({
+                        userId: userId,
+                        balance: tranObj.amount,
+                        transactions: [tranObj] // Create new array with the new transaction
+                    })
+                    await newWallet.save();
+
                 }
+                await admin.order.updateOne({ "userId": userId, "orders._id": response.orderId },
+                    { $set: { "orders.$.refundStatus": true, "orders.$.paymentStatus": "refunded" } })
+                resolve()
+
+            } catch (err) {
+                console.log(err);
+                reject("Failed to update wallet")
+            }
+        })
+    },
+
+    amendOrderStatus: (userId, orderId, orderStatus, reason) => {
+        let response = {}
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (reason === "") {
+                    let orderInfo = await admin.order.updateOne({ "userId": ObjectId(userId), "orders._id": ObjectId(orderId) },
+                        { $set: { "orders.$.orderStatus": orderStatus } })
+                    console.log("amendOrderStatus admin helper : ", orderInfo);
+                    resolve()
+
+                } else {
+
+                    let orderInfo = await admin.order.updateOne({ "userId": ObjectId(userId), "orders._id": ObjectId(orderId) },
+                        { $set: { "orders.$.orderStatus": orderStatus, "orders.$.cancellationReason": reason } })
+
+                    const orderItem = await admin.order.findOne({ "userId": userId, "orders._id": ObjectId(orderId) }, { "orders.$": 1, _id: 0 })
+                    response.userId = userId
+                    response.orderId = ObjectId(orderId)
+                    response.totalPrice = orderItem.orders[0].totalPrice
+
+                    console.log("orderItem qauntity increase : ", orderItem);
+                    for (let i = 0; i < orderItem.orders[0].productDetails.length; i++) {
+                        const productId = orderItem.orders[0].productDetails[i].product_id;
+                        const quantity = orderItem.orders[0].productDetails[i].quantity
+                        console.log("productId and quantity : ", productId, quantity);
+                        await admin.product.updateOne(
+                            { _id: productId },
+                            { $inc: { "product_details.0.quantity": quantity } }
+                        )
+                    }
+
+                    if (orderInfo.modifiedCount === 1
+                        && orderItem.orders[0].paymentMethod !== 'COD'
+                        && orderItem.orders[0].paymentStatus === 'success') {
+                        resolve(response)
+                    }
+                    resolve()
+                }
+
+
+            } catch (err) {
+                console.log(err);
+                reject("order cancellation failed")
+            }
+        })
+    },
+
+    //offers
+    postoffer: (offer) => {
+        const offerObj = {
+            gender: offer.gender,
+            category: offer.category,
+            subcategory: offer.subcategory,
+            offerPercentage: offer.offerPercentage,
+            endDate: offer.endDate,
+            offerStatus :true
+        }
+        let offerPercentage = parseInt(offer.offerPercentage)
+        if (offer.subcategory === undefined) {
+            offer.subcategory = ''
+        }
+        console.log("offerObj : ", offerObj, typeof (offerPercentage));
+        return new Promise(async (resolve, reject) => {
+
+            try {
+               const categoryExist = await admin.offer.find({'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory,'offerStatus':true})
+                console.log("categoryExist : ",categoryExist);
+                
+                if(categoryExist.length === 0){
+                    await admin.product.updateMany(
+                    { 'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory },
+                    [
+                        {
+                            $set: {
+                                discountPrice: {
+                                    $floor: {
+                                        $multiply: [
+                                            "$price",
+                                            {
+                                                $subtract: [
+                                                    1,
+                                                    { $divide: [offerPercentage, 100] }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                discountPercentage: offer.offerPercentage,
+                                offerStatus :true
+                            }
+                        }
+                    ]
+                )
+
+                const categoryOffer = new admin.offer({
+                    gender: offer.gender,
+                    category: offer.category,
+                    subcategory: offer.subcategory,
+                    offerPercentage: offer.offerPercentage,
+                    endDate: offer.endDate,
+                    offerStatus :true
+                })
+                await categoryOffer.save()
+                }else{
+
+                }
+                
+
                 resolve()
 
             } catch (err) {
                 console.log(err);
             }
         })
-    }
 
-}
+    },
+
+    OfferExist :  (offer) => {
+        
+        let offerPercentage = parseInt(offer.offerPercentage)
+        if (offer.subcategory === undefined) {
+            offer.subcategory = ''
+        }
+        console.log("offerObj : ", typeof (offerPercentage));
+        return new Promise(async (resolve, reject) => {
+
+            try {
+               const categoryExist = await admin.offer.find({'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory,'offerStatus':true})
+                console.log("categoryExist : ",categoryExist);
+                
+                if(categoryExist.length !== 0){
+                    let response =[]
+                    response = categoryExist
+                    resolve(response)
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    }, 
+
+    OfferUnlist: (offer) => {
+        
+        let offerPercentage = parseInt(offer.offerPercentage)
+        if (offer.subcategory === undefined) {
+            offer.subcategory = ''
+        }
+        console.log("offerObj OfferUnlist : ", typeof (offerPercentage));
+        return new Promise(async (resolve, reject) => {
+
+            try {
+               const categoryExist = await admin.offer.updateOne({'_id': ObjectId(offer.offfeID)},{$set :{"offerStatus":false}})
+                console.log("categoryExist : ",categoryExist);
+                
+                   await admin.product.updateMany(
+                    { 'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory },
+                    
+                        {
+                            $unset: {
+                                discountPrice: "",
+                                discountPercentage: "",
+                                offerStatus :""
+                            }
+                        }
+                    
+                )
+                resolve({response:true})
+
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    }, 
+
+    offerList :  () => {
+        
+        return new Promise(async (resolve, reject) => {
+
+            try {
+
+                const response = await admin.offer.find({})
+                if(response){
+                    console.log("offerlist response : ", response);
+                    resolve(response)
+                }else{
+                    response =false
+                    resolve(response)
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    },
+}   

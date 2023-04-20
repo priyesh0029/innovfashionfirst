@@ -23,11 +23,10 @@
                             <% if(response[i].orderStatus === "cancelled"){%>
                                 <p class="badge rounded-pill alert-danger text-danger"> <%=response[i].orderStatus %></p><br>
                                 <p>cancellation reason : <%=response[i].cancellationReason%> </p>
-                              <%}else if(response[i].orderStatus === "Delivered"){%>
+                              <%}else if(response[i].orderStatus === "Delivered" || response[i].orderStatus === "returned"){%>
 
                                 <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200 bg-secondary-light" id="orderStatusDropdown">
-                                    <option>select order status</option>
-                                    <option value="cancelled">Cancel</option>
+                                    <option><%=response[i].orderStatus%></option>
                                 </select>
                             <%}else{%>
 
@@ -101,7 +100,7 @@
                                                     <div class="info"> <%=response[i].products[j].sub_catagory %> <%=response[i].products[j].color %>, <%=response[i].products[j].size %> size </div>
                                                 </a>
                                             </td>
-                                            <td> ₹ <%=response[i].products[j].price %></td>
+                                            <td> ₹ <%=response[i].products[j].product_unitPrice %></td>
                                             <td> <%=response[i].products[j].product_quantity %> </td>
                                             <td class="text-end"> ₹<%=response[i].products[j].product_subTotal %> </td>
                                         </tr>

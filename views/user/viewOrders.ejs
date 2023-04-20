@@ -10,79 +10,103 @@
                 </div>
 
             </div>
-            <div class="card mb-4">
+            <%if(response.length!==0){%>
 
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Orders</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">order Status</th>
-                                    <th scope="col">payment Status</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col" class="text-end"> Action </th>
-                                </tr>
-                            </thead>
-                            <tbody  id="ordersListId">
-                                <%for(let i=0;i< response.length;i++){%>
+                <div class="card mb-4">
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                     <tr>
-                                        <td>order-id : <%=response[i]._id%>
-                                        </td>
-                                        <td><b>
-                                                <%=response[i].createdAt%>
-                                            </b></td>
-                                        <%if(response[i].orderStatus==='cancelled' ){%>
-                                            <td class="text-center"><span
-                                                    class="badge rounded-pill alert-danger text-danger">
-                                                    <%=response[i].orderStatus %>
-                                                </span></td>
-                                            <%}else if(response[i].orderStatus==='Delivered' ){%>
+                                        <th scope="col">Orders</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">order Status</th>
+                                        <th scope="col">payment Status</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col" class="text-end"> Action </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersListId">
+                                    <%for(let i=0;i< response.length;i++){%>
+                                        <tr>
+                                            <td>order-id : <%=response[i]._id%>
+                                            </td>
+                                            <td><b>
+                                                    <%=response[i].createdAt%>
+                                                </b></td>
+                                            <%if(response[i].orderStatus==='cancelled' ){%>
                                                 <td class="text-center"><span
-                                                        class="badge rounded-pill alert-success text-success">
+                                                        class="badge rounded-pill alert-danger text-danger">
                                                         <%=response[i].orderStatus %>
                                                     </span></td>
-                                                <%}else{%>
+                                                <%}else if(response[i].orderStatus==='Delivered' ){%>
                                                     <td class="text-center"><span
-                                                            class="badge rounded-pill alert-warning">
+                                                            class="badge rounded-pill alert-success text-success">
                                                             <%=response[i].orderStatus %>
                                                         </span></td>
-                                                    <%}%>
-                                                        <td class="text-center">
-                                                            <p class="badge rounded-pill alert-success text-success">
-                                                                <%=response[i].paymentStatus%>
-                                                            </p>
-                                                        </td>
-                                                        <td class="text-center">₹ <%=response[i].totalPrice%>
-                                                        </td>
+                                                    <%}else{%>
+                                                        <td class="text-center"><span
+                                                                class="badge rounded-pill alert-warning">
+                                                                <%=response[i].orderStatus %>
+                                                            </span></td>
+                                                        <%}%>
+                                                            <td class="text-center">
+                                                                <p
+                                                                    class="badge rounded-pill alert-success text-success">
+                                                                    <%=response[i].paymentStatus%>
+                                                                </p>
+                                                            </td>
+                                                            <td class="text-center">₹
+                                                                <%=response[i].totalPrice%>
+                                                            </td>
 
-                                                        <td class="text-end">
-                                                            <a href="/orders?orderId=<%=response[i]._id%>"
-                                                                class="btn btn-md rounded font-sm">View</a>
-                                                        </td>
-                                    </tr>
-                                    <%}%>
-                            </tbody>
-                        </table>
-                    </div> <!-- table-responsive //end -->
-                </div> <!-- card-body end// -->
-            </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <%for(let i=1;i<=Math.ceil(length/10);i++){%>
-                            <li class="page-item"  id="pagebtn-<%=i%>"><a class="page-link" href="#"
-                                    onclick="OrderPagination(event,'<%=i%>','<%=Math.ceil(length/10)%>')">
-                                    <%=i%>
-                                </a></li>
-                            <%}%>
-                                <!-- <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li> 
-                                 <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li> -->
-                    </ul>
-                </nav>
-            </div>
+                                                            <td class="text-end">
+                                                                <a href="/orders?orderId=<%=response[i]._id%>"
+                                                                    class="btn btn-md rounded font-sm">View</a>
+                                                            </td>
+                                        </tr>
+                                        <%}%>
+                                </tbody>
+                            </table>
+                        </div> <!-- table-responsive //end -->
+                    </div> <!-- card-body end// -->
+                </div> <!-- card end// -->
+                <div class="pagination-area mt-15 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <%for(let i=1;i<=Math.ceil(length/10);i++){%>
+                                <li class="page-item" id="pagebtn-<%=i%>"><a class="page-link" href="#"
+                                        onclick="OrderPagination(event,'<%=i%>','<%=Math.ceil(length/10)%>')">
+                                        <%=i%>
+                                    </a></li>
+                                <%}%>
+                                    <!-- <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">16</a></li> 
+                         <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li> -->
+                        </ul>
+                    </nav>
+                </div>
+
+                <%}else{%>
+                    <div class="card-body">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="mt-5">
+                                            <th scope="col" class="text-center"> <h3>No orders placed..!</h3> </th>
+
+                                        </tr>
+                                    </thead>
+                                </table>    
+                                <div class="col-md-12 mt-150 text-center">
+                                    <a href="/shop"><button  class="btn btn-primary btn-md">continue Shopping</button></a>
+                                </div>
+                    </div>
+
+
+                    <%}%>
+                        
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
 
@@ -91,7 +115,7 @@
 
     <script>
 
-        function OrderPagination(e, pageNo,totalPage) {
+        function OrderPagination(e, pageNo, totalPage) {
             e.preventDefault()
             console.log(pageNo);
             $.ajax({
@@ -102,11 +126,11 @@
                 },
                 success: function (response) {
                     console.log("response : ", response);
-                    for(let i=1;i<= parseInt(totalPage);i++){
-                        let itemElement = document.getElementById('pagebtn-'+String(i))
+                    for (let i = 1; i <= parseInt(totalPage); i++) {
+                        let itemElement = document.getElementById('pagebtn-' + String(i))
                         itemElement.classList.remove('active');
                     }
-                    let itemElement = document.getElementById('pagebtn-'+pageNo)
+                    let itemElement = document.getElementById('pagebtn-' + pageNo)
                     itemElement.classList.add('active');
 
                     let orderListdiv = ''
@@ -121,22 +145,16 @@
                                 <td><b>
                                     ${ele.createdAt}
                                     </b></td>
-                                if(response[i].orderStatus==='cancelled' ){
+                                
                                     <td class="text-center"><span
-                                            class="badge rounded-pill alert-danger text-danger">
+                                            class="badge rounded-pill ${ele.orderStatus === 'cancelled' ? 'alert-danger text-danger' :
+                                ele.orderStatus === 'Delivered' ? 'alert-success text-success' : 'alert-warning'
+                            }">
                                         ${ele.orderStatus}
                                         </span></td>
-                                    }else if(${ele.orderStatus}==='Delivered' ){
-                                        <td class="text-center"><span
-                                                class="badge rounded-pill alert-success text-success">
-                                                ${ele.orderStatus}
-                                            </span></td>
-                                        }else{
-                                            <td class="text-center"><span
-                                                    class="badge rounded-pill alert-warning">
-                                                    ${ele.orderStatus}
-                                                </span></td>
-                                            }
+                                  
+                                        
+                                          
                                                 <td class="text-center">
                                                     <p class="badge rounded-pill alert-success text-success">
                                                         ${ele.paymentStatus}
@@ -154,6 +172,7 @@
                     };
                     $('#ordersListId').html(orderListdiv)
                 }
+
             })
         }
 

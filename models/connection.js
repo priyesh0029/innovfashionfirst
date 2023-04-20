@@ -70,6 +70,16 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  discountPrice: {
+    type: Number
+  },
+  discountPercentage: {
+    type: Number
+  },
+  offerStatus: {
+    type: Boolean,
+    default: false
+  },
 
   product_details: [{
     quantity: {
@@ -189,6 +199,9 @@ const cartSchema = new mongoose.Schema({
         type: ObjectId,
         ref: "product"
       },
+      perUnitPrice: {
+        type: Number
+      },
       quantity: {
         type: Number
       },
@@ -282,9 +295,9 @@ const orderSchema = new mongoose.Schema({
       ref: 'address'
     },
     paymentMode: String,
-    status: {
+    refundStatus: {
       type: Boolean,
-      default: true
+      default: false
     },
     createdAt: {
       type: Date,
@@ -297,10 +310,34 @@ const orderSchema = new mongoose.Schema({
     cancellationReason : {
       type: String,
       default: null
+    },
+    returnedReason : {
+      type: String,
+      default: null
     }
   }
   ]
 })
+
+
+//WalletSchema
+
+const walletSchema = new mongoose.Schema({
+  userId: {
+      type: ObjectId,
+      ref: 'user',
+      required: true
+  },
+  balance: {
+      type: Number,
+      required: true
+  },
+  transactions: {
+      type: [Object],
+      default: []
+  }
+})
+
 
 
 
@@ -318,6 +355,37 @@ const adminSchema = new mongoose.Schema({
 
 })
 
+//Admin-category-offers
+
+const adminOffersSchema = new mongoose.Schema({
+  gender: {
+    type: String,
+    default : null
+  },
+  category: {
+    type: String,
+    default : null
+  },
+  subcategory: {
+    type: String,
+    default : null
+  },
+  offerPercentage: {
+    type: String,
+    default : null,
+    required : true
+  },
+  endDate: {
+    type: String,
+    required : true
+  },
+  offerStatus: {
+    type: Boolean,
+    default: false
+  }
+
+})
+
 module.exports = {
 
   user: mongoose.model('user', userSchema),
@@ -327,7 +395,9 @@ module.exports = {
   wishlist: mongoose.model('wishlist', wishlistSchema),
   address: mongoose.model('address', addressSchema),
   order : mongoose.model('order', orderSchema),
-  admin: mongoose.model('admin', adminSchema)
+  wallet :  mongoose.model('wallet', walletSchema),
+  admin: mongoose.model('admin', adminSchema),
+  offer: mongoose.model('offer', adminOffersSchema)
 
 }
 

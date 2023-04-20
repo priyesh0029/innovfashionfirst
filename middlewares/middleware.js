@@ -29,7 +29,6 @@ module.exports = {
     adminAuth: ((req, res, next) => {
 
         if (req.session.admin) {
-            console.log("req.session.admin :",req.session.admin);
             next()
         } else {
             res.redirect('/admin')

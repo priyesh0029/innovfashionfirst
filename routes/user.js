@@ -67,6 +67,8 @@ router.post('/otpverify',controller.postOtpverify)
 
     router.get('/viewAddress',userauths.userAuth,controller.viewAddress)
 
+    router.get('/viewWallet',userauths.userAuth,controller.viewWallet)
+
     router.post('/checkPassword',userauths.userAuth,controller.checkPassword)
 
 

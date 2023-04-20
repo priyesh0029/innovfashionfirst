@@ -59,6 +59,9 @@
           <label for="">Price</label>
           <input type="text" name="price" class="form-control" value="<%= response.price %>" />
 
+          <label for="">Discount price</label>
+          <input type="text" name="discountPrice" class="form-control" value="<%= response.discountPrice %>" />
+
           <% response.product_details.forEach(function(item) { %>
           <label for="">quantity</label>
           <input type="text" name="quantity" class="form-control" value="<%= item.quantity %>" />

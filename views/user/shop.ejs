@@ -95,17 +95,33 @@
                             <span>90%</span>
                           </span>
                         </div>
-                        <div class="product-price">
-                          <span>
-                            ₹<%= item.price%>
-                          </span>
-                          <span class="old-price">₹1999.00</span>
-                        </div>
+                        <%if(item.discountPrice){%>
+                              <div class="product-price">
+                                <span>
+                                  ₹<%= item.discountPrice%>
+                                </span>
+                                <span class="old-price">₹<%= item.price%></span>
+                              </div>
+                          <%}else{%>
+                            <div class="product-price">
+                              <span>
+                                ₹<%= item.price%>
+                              </span>
+                              <span class="old-price">₹1999.00</span>
+                            </div>
+                            <%}%>
                         <div class="product-action-1 show">
                           <% if(locals.headerStatus) {%>
                             <%if(item.product_details[0].quantity !== 0){%>
-                            <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
+
+                              <%if(item.discountPrice){%>
+                                <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
+                                  onclick="addTocart('<%= item._id %>','<%= item.discountPrice%>')"></i></div>
+                            <%}else{%>
+                              <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
                                 onclick="addTocart('<%= item._id %>','<%= item.price%>')"></i></div>
+                              <%}%>
+                            
                                 <%}%>
                             <%} else {%>
                               <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
@@ -505,7 +521,7 @@ $.ajax({
     },
     success: function (response) {
       console.log("subCatFilter function invoke2 : ",gender,category,subcategory,sortType);
-       console.log("response1: ",response[0].gender);
+       console.log("response1: ",response);
        document.getElementById("noOfProducts").innerHTML =  `We found <strong class="text-brand" > ${response.length}</strong> items for
               you!`
       if(gender !== null && category !== null && subcategory !==null){
@@ -514,9 +530,14 @@ $.ajax({
                         <li onclick="priceSort('${response[0].gender}','${response[0].catagory}','${response[0].sub_catagory}','high')">Price: High to Low</li> `
       }      
      let productFilterPage = ''
-
-  for (let i = 0; i < response.length; i++) {
-    const ele = response[i];
+     for (let i = 0; i < response.length; i++) {
+       const ele = response[i];
+       let productPrice 
+       if(ele.discountPrice){
+        productPrice = ele.discountPrice
+       }else{
+        productPrice = ele.price
+       }
     productFilterPage += `
     <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                 <div class="product-cart-wrap mb-30">
@@ -529,8 +550,14 @@ $.ajax({
                     </div>
                     <div class="product-action-1">
                       
-                      <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i
-                          class="fi-rs-heart"></i></a>
+                      <% if(locals.headerStatus) {%>
+                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist(event,'${ele._id}')"><i
+                              class="fi-rs-heart"></i></a>
+
+                            <%} else {%>
+                              <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist2(event)"><i
+                                class="fi-rs-heart"></i></a>
+                              <%} %>
                       
                     </div>
                     <div class="product-badges product-badges-position product-badges-mrg" style="z-index: 100;">
@@ -552,19 +579,41 @@ $.ajax({
                       <span>
                         <span>90%</span>
                       </span>
-                    </div>
-                    <div class="product-price">
-                      <span>
-                        ₹${ele.price}
-                      </span>
-                      <span class="old-price">₹1999.00</span>
-                    </div>
-                    <div class="product-action-1 show">
-                      <% if(locals.headerStatus) {%>
-                        <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
-                            onclick="addTocart(${ele._id},${ele.price})"></i></div>
+                    </div>`
+                    if(ele.discountPrice){
+                productFilterPage += ` <div class="product-price">
+                                <span>
+                                  ₹<%='${ele.discountPrice}'%>
+                                </span>
+                                <span class="old-price">₹<%='${ele.price}'%></span>
+                              </div>`
+                          }else{
+                 productFilterPage += `<div class="product-price">
+                              <span>
+                                ₹<%='${ele.price}'%>
+                              </span>
+                              <span class="old-price">₹1999.00</span>
+                            </div>`
+                            }  
+                          
+                            
+                           
+              productFilterPage += `<div class="product-action-1 show">
+                      <% if(locals.headerStatus) {%>`
+                        
+                        if(ele.discountPrice){
+                productFilterPage += ` 
+                  <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
+                            onclick="addTocart('${ele._id}','${ele.discountPrice}')"></i></div>`
+                          }else{
+                 productFilterPage += ` 
+                  <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
+                            onclick="addTocart('${ele._id}','${ele.price}')"></i></div>`
+                            }  
 
-                        <%} else {%>
+                        
+
+               productFilterPage += `  <%} else {%>
                           <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
                               class="fi-rs-shopping-bag-add" onclick="addTocart2()"></i></div>
                           <%} %>
