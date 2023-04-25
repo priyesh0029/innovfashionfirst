@@ -534,6 +534,27 @@ module.exports = {
 
         res.render('user/orderPlaced', { headerStatus: true, cartCount, wishListCount, user })
     },
+    getAvailableCoupen:(req, res) => {
+        const email = req.session.user.email
+        userhelpers.AvailableCoupen(email).then((response)=>{
+                    res.json(response)
+         })
+    },
+    postAjaxCouponDiscount:(req, res) => {
+        const email = req.session.user.email
+        console.log("postAjaxCouponDiscount : ",req.body);
+        userhelpers.CartCouponDiscount(email,req.body).then((response)=>{
+            res.json(response)
+         })
+    },
+
+    postAjaxremoveCoupen :(req, res) => {
+        const email = req.session.user.email
+        console.log("postAjaxremoveCoupen : ",req.body);
+        userhelpers.removeCoupen(email,req.body).then(()=>{
+            res.json({ok:true})
+         })
+    },
 
     getLogout: (req, res) => {
 

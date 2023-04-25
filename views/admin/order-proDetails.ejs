@@ -100,9 +100,9 @@
                                                     <div class="info"> <%=response[i].products[j].sub_catagory %> <%=response[i].products[j].color %>, <%=response[i].products[j].size %> size </div>
                                                 </a>
                                             </td>
-                                            <td> ₹ <%=response[i].products[j].product_unitPrice %></td>
+                                            <td> ₹ <%=response[i].products[j].product_unitPrice %>.00</td>
                                             <td> <%=response[i].products[j].product_quantity %> </td>
-                                            <td class="text-end"> ₹<%=response[i].products[j].product_subTotal %> </td>
+                                            <td class="text-end"> ₹<%=response[i].products[j].product_subTotal %>.00 </td>
                                         </tr>
                                         <%} %>
                                         <tr>
@@ -110,15 +110,21 @@
                                                 <article class="float-end">
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
-                                                        <dd>₹<%=response[i].totalPrice %></dd>
+                                                        <% let total=0; %>
+                                                                <% for(let i=0; i < response[0].products.length;i++) { %>
+                                                                    <% total +=parseInt(response[0].products[i].product_subTotal)
+                                                                        %>
+                                                                        <% } %>
+                                                                            <dd>₹<%= total %>.00</dd>
+                                                        
                                                     </dl>
                                                     <dl class="dlist">
-                                                        <dt>Shipping cost:</dt>
-                                                        <dd>₹0.00</dd>
+                                                        <dt>Discount applied:</dt>
+                                                        <dd>₹<%=response[i].couponDiscount %>.00</dd>
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt>Grand total:</dt>
-                                                        <dd> <b class="h5">₹<%=response[i].totalPrice %></b> </dd>
+                                                        <dd> <b class="h5">₹<%=response[i].totalPrice %>.00</b> </dd>
                                                     </dl>
                                                     <dl class="dlist" id="orderStatusId">
                                                         <dt class="text-muted">Order Status:</dt>

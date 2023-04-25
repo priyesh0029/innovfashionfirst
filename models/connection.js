@@ -45,6 +45,8 @@ const userSchema = new mongoose.Schema({
   userBlockStatus: {
     type: Boolean, default: false
   },
+  refferalCode : String,
+  usedCoupons :Array
   //  CreatedAt:{
   //    type:Date,
   //    deafault:Date.now,
@@ -79,6 +81,16 @@ const productSchema = new mongoose.Schema({
   offerStatus: {
     type: Boolean,
     default: false
+  },
+  productOfferPercentage: {
+    type: Number
+  },
+  productOfferStatus: {
+    type: Boolean,
+    default: false
+  },
+  productofferExpiry: {
+    type: String
   },
 
   product_details: [{
@@ -214,6 +226,14 @@ const cartSchema = new mongoose.Schema({
     type: Number, 
     default: 0
   },
+  couponDiscount: {
+    type: Number, 
+    default: 0
+  },
+  couponCode: {
+    type: String,
+    default: null
+  },
   grand_Total: Number
 
 })
@@ -290,6 +310,14 @@ const orderSchema = new mongoose.Schema({
     paymentStatus: String,
     totalPrice: Number,
     totalQuantity: Number,
+    couponDiscount: {
+      type: Number, 
+      default: 0
+    },
+    couponCode: {
+      type: String,
+      default: null
+    },
     shippingAddress: {
       type: ObjectId,
       ref: 'address'
@@ -314,7 +342,7 @@ const orderSchema = new mongoose.Schema({
     returnedReason : {
       type: String,
       default: null
-    }
+    },
   }
   ]
 })
@@ -386,6 +414,44 @@ const adminOffersSchema = new mongoose.Schema({
 
 })
 
+//Admin-CouponShema
+
+const adminCouponSchema = new mongoose.Schema({
+  discountPercentage: {
+    type: Number,
+    default : null
+  },
+  maxDiscountAmount: {
+    type: Number,
+    default : null
+  },
+  minAmount: {
+    type: Number,
+    default : null
+  },
+  category: {
+    type: String,
+    default : null,
+    required : true
+  },
+  description: {
+    type: String,
+    required : true
+  },
+  couponCode: {
+    type: String,
+    required : true
+  },
+  endDate: {
+    type: String
+  },
+  couponStatus: {
+    type: Boolean,
+    default: true
+  }
+
+})
+
 module.exports = {
 
   user: mongoose.model('user', userSchema),
@@ -397,7 +463,8 @@ module.exports = {
   order : mongoose.model('order', orderSchema),
   wallet :  mongoose.model('wallet', walletSchema),
   admin: mongoose.model('admin', adminSchema),
-  offer: mongoose.model('offer', adminOffersSchema)
+  offer: mongoose.model('offer', adminOffersSchema),
+  coupon :mongoose.model('coupon', adminCouponSchema)
 
 }
 

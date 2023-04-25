@@ -293,7 +293,7 @@ module.exports = {
         console.log("hiiiiiii", req.body);
         try {
             adminHelpers.postoffer(req.body).then((response) => {
-                res.redirect('/admin//offers')
+                res.redirect('/admin/offers')
             })
         } catch (error) {
             console.log(error);
@@ -304,18 +304,18 @@ module.exports = {
         console.log("hiiiiiii", req.query);
         try {
             adminHelpers.OfferExist(req.query).then((response) => {
-               res.status(200).json(response)
+                res.status(200).json(response)
             })
         } catch (error) {
             console.log(error);
         }
     },
 
-    ajaxOfferUnlist :(req, res) => {
+    ajaxOfferUnlist: (req, res) => {
         console.log("ajaxOfferUnlist", req.body);
         try {
             adminHelpers.OfferUnlist(req.body).then((response) => {
-               res.status(200).json(response)
+                res.status(200).json(response)
             })
         } catch (error) {
             console.log(error);
@@ -332,6 +332,100 @@ module.exports = {
             console.log(error);
         }
     },
+
+
+//admin-product-offers
+    
+    getProductofferPage : (req, res) => {
+        
+        try {
+            adminHelpers.getProductoffer().then((response) => {
+                res.render('admin/productsOffer', { adminStatus, layout: "adminLayout",response})
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    postProductofferPage : (req, res) => {
+        console.log("OfferProductList", req.body);
+        try {
+            adminHelpers.postProductofferPage(req.body).then((response) => {
+                 res.status(200).json(response)
+            }).catch((error)=>{
+                res.status(400).json(error)
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    OfferProductList : (req, res) => {
+        console.log("OfferProductList", req.body);
+        try {
+            adminHelpers.OfferProductList(req.body).then((response) => {
+                res.status(200).json(response)
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    unListProductOffer : (req, res) => {
+        console.log("unListProductOffer", req.body);
+        try {
+            adminHelpers.unListProductOffer(req.body).then((response) => {
+                res.status(200).json(response)
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    OfferProductSort :  (req, res) => {
+        console.log("OfferProductSort", req.body);
+        try {
+            adminHelpers.OfferProductSort(req.body).then((response) => {
+                res.status(200).json(response)
+            }).catch((error)=>{
+                res.status(400).json(error)
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    //admin-coupons
+    getCouponPage: (req, res) => {
+        console.log("hiiiiiii");
+        try {
+            adminHelpers.couponList().then((response) => {
+                res.render('admin/coupons', { adminStatus, layout: "adminLayout",response})
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    postCoupon : (req, res) => {
+        console.log("hiiiiiii",req.body);
+        try {
+            adminHelpers.postCoupon(req.body).then((response) => {
+                res.redirect('/admin/coupons')
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    ajaxUnlistCoupon: (req, res) => {
+        adminHelpers.unlistCoupon(req.body.couponCode)
+        .then((response) => {
+            res.status(200).json(response);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(400).json({error});
+        });
+    },
+    
 
     //admin-Logout    
     getAdminLogout: (req, res) => {

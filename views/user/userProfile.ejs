@@ -556,11 +556,11 @@ aria-hidden="true">
                 data: {},
                 success: function (response) {
                    console.log(response);
-                    document.getElementById("walletTotal").innerHTML = "Available Balance : ₹"+response[0].balance
+                    document.getElementById("walletTotal").innerHTML = "Available Balance : ₹"+response.balance
                    let walletInfo = ''
 
-                    for (let i = response[0].transactions.length-1; i >= 0; i--) {
-                        const ele = response[0].transactions[i];
+                    for (let i = response.transactions.length-1; i >= 0; i--) {
+                        const ele = response.transactions[i];
                         walletInfo += `
                         
                         

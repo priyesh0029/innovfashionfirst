@@ -1,0 +1,373 @@
+<body>
+
+
+
+    <section class="content-main">
+        <div class="d-flex" style="justify-content: space-between;">
+            <div class="mb-5">
+                <h2 style="    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #495057;
+            font-weight: 600;
+            line-height: 1.5;">Product offers</h2>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>
+
+                            <select class="form-select" name="category" id="offerStatus"
+                                style="min-width: 10rem;background-color: white;border:revert;" required>
+                                <option></option>
+                                <option value="allProducts">All products</option>
+                                <option value="OfferProducts">Offer products</option>
+
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-md rounded font-sm hover-up mx-4"
+                                onclick="sortProducts()">Search</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card my-5">
+            <header class="card-header" style="background-color: gainsboro;">
+
+                <table>
+                    <tr>
+                        <td>
+
+                            <label for="" class="me-2">Gender : </label>
+                        </td>
+                        <td>
+
+                            <select class="form-select" name="gender" id="gender" style="min-width: 10rem;" required>
+                                <option></option>
+                                <option value="Men">Men</option>
+                                <option value="Women">Women</option>
+                                <option value="Kids">Kids</option>
+
+                            </select>
+                        </td>
+
+                        <td>
+
+                            <label for="" class="mx-2">Category : </label>
+                        </td>
+                        <td>
+
+                            <select class="form-select" name="category" id="category" style="min-width: 10rem;"
+                                required>
+                                <option></option>
+                                <option value="Topwear">Topwear</option>
+                                <option value="Bottomwear">Bottomwear</option>
+                                <option value="Footwear">Footwear</option>
+
+                            </select>
+                        </td>
+
+
+                        <td>
+
+                            <label for="" class="mx-2">sub-category : </label>
+                        </td>
+                        <td>
+
+                            <select class="form-select" name="subcategory" id="subcategory" style="min-width: 10rem;"
+                                required>
+
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-md rounded font-sm hover-up mx-4"
+                                onclick="listProducts()">Search</button>
+                        </td>
+
+
+                    </tr>
+                </table>
+
+            </header> <!-- card-header end// -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Discount price</th>
+                                <th scope="col">Discount %</th>
+                                <th scope="col">Offer Status</th>
+                                <th scope="col">Expiry date</th>
+                                <th scope="col" class="text-end"> Action </th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableId">
+                            <%for(let i=0;i< response.length;i++){%>
+                                <tr>
+                                    <td>
+                                        <div class="left">
+                                            <img src="/uploads/<%=response[i].Image[0]%>" class="img-sm img-thumbnail"
+                                                alt="Item">
+                                        </div>
+
+                                    </td>
+                                    <td><b>
+                                            <%=response[i].product_name.slice(0,36)%>
+                                        </b></td>
+                                    <td>$<%=response[i].price%>
+                                    </td>
+                                    <%if(response[i].productOfferStatus){%>
+                                        <td>₹ <%=response[i].discountPrice%>
+                                        </td>
+                                        <td>
+                                            <%=response[i].productOfferPercentage%>%
+                                        </td>
+                                        <td class="text-success">Active</td>
+                                        <td>
+                                            <%=response[i].productofferExpiry%>
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="#" class="btn btn-md rounded font-sm"
+                                                onclick="unlistProductOffer('<%=response[i]._id%>')">Unlist</a>
+                                        </td>
+                                        <%}else{%>
+                                            <td>₹0.00</td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td class="text-end">
+                                                <!-- modal-form-start -->
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="offerModal('<%=response[i]._id%>')">Add offer</button>
+
+                                                <!-- modal-form-end -->
+                                            </td>
+                                            <%}%>
+
+                                </tr>
+                                <%}%>
+
+                        </tbody>
+                    </table>
+                </div> <!-- table-responsive //end -->
+
+
+
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i
+                                class="material-icons md-chevron_right"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </section> <!-- content-main end// -->
+
+    <!-- modal-form-start -->
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add product offer</h5>
+
+
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="offerFormData">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Offer percentage</label>
+                            <input type="text" class="form-control" id="recipient-name" name="percentage">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Expiry date</label>
+                            <input type="date" class="form-control" id="recipient-name" name="endDate">
+                        </div>
+                        <div class="modal-footer">
+                            <input type="text" id="proId" name="proId" hidden>
+                            <button class="btn btn-primary" onclick="offerSubmit(event)">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- modal-form-end -->
+
+    <script src="/admin-assets/js/ajaxgetsubcat.js"></script>
+
+</body>
+
+<script>
+    function listProducts() {
+        let gender = document.getElementById("gender").value
+        let category = document.getElementById("category").value
+        let subcategory = document.getElementById("subcategory").value
+
+        console.log(gender, category, subcategory);
+
+        $.ajax({
+            url: '/admin/OfferProductList',
+            type: 'post',
+            data: {
+                gender,
+                category,
+                subcategory
+            },
+            success: function (response) {
+                console.log(response);
+                let producDetails = ''
+
+                for (let i = 0; i < response.length; i++) {
+                    const ele = response[i];
+                    producDetails += `
+                                <tr>
+                                <td>
+                                    <div class="left">
+                                        <img src="/uploads/${ele.Image[0]}" class="img-sm img-thumbnail" alt="Item">
+                                    </div>
+                                </td>
+                                <td><b>${ele.product_name.slice(0, 36)}</b></td>
+                                <td>₹ ${ele.price}</td>`
+
+                    if (ele.productOfferStatus) {
+                        producDetails += ` <td>₹ ${ele.discountPrice}</td>
+                                <td>${ele.productOfferPercentage}%</td>
+                                <td class="text-success">Active</td>
+                                <td>${ele.productofferExpiry}</td>
+                                <td class="text-end">
+                                    <a href="#" class="btn btn-md rounded font-sm" onclick="unlistProductOffer('${ele._id}')">Unlist</a>
+                                </td>`
+                    } else {
+                        producDetails += `<td>₹0.00</td>
+                                <td> - </td>
+                                <td> - </td>
+                                <td> - </td>
+                                <td class="text-end">
+                                    <!-- modal-form-start -->
+                                    <button type="button" class="btn btn-primary"  onclick="offerModal('${ele._id}')">Add offer</button>
+                                      
+                                    <!-- modal-form-end -->
+                                </td>
+                                </tr>                        
+                                
+                                `
+                    }
+                };
+                $('#productTableId').html(producDetails)
+
+            }
+        });
+
+    }
+
+    function offerModal(proId) {
+        console.log(proId);
+
+        $('#exampleModal').modal('toggle')
+        document.getElementById("proId").value = proId
+    }
+
+    function offerSubmit(e) {
+        e.preventDefault()
+
+        let formData = $('#offerFormData').serialize()
+        console.log("formData : ", formData);
+        $('#exampleModal').modal('hide')
+        $.ajax({
+            url: '/admin/productOffers',
+            type: 'post',
+            data: $('#offerFormData').serialize(),
+            success: function (response) {
+                if (response.ok) {
+                    window.location.reload()
+                }
+            }
+        });
+    }
+
+    function unlistProductOffer(proId) {
+        $.ajax({
+            url: '/admin/OfferProductUnList',
+            type: 'post',
+            data: {
+                proId
+            },
+            success: function (response) {
+                if (response.ok) {
+                    window.location.reload()
+                }
+            }
+        });
+    }
+
+    function sortProducts() {
+        let offerStatus = document.getElementById("offerStatus").value
+        console.log(offerStatus);
+
+        $.ajax({
+            url: '/admin/OfferProductSort',
+            type: 'post',
+            data: {
+                offerStatus
+            },
+            success: function (response) {
+                console.log(response);
+                let producDetails = ''
+
+                for (let i = 0; i < response.length; i++) {
+                    const ele = response[i];
+                    producDetails += `
+                                <tr>
+                                <td>
+                                    <div class="left">
+                                        <img src="/uploads/${ele.Image[0]}" class="img-sm img-thumbnail" alt="Item">
+                                    </div>
+                                </td>
+                                <td><b>${ele.product_name.slice(0, 36)}</b></td>
+                                <td>₹ ${ele.price}</td>`
+
+                    if (ele.productOfferStatus) {
+                        producDetails += ` <td>₹ ${ele.discountPrice}</td>
+                                <td>${ele.productOfferPercentage}%</td>
+                                <td class="text-success">Active</td>
+                                <td>${ele.productofferExpiry}</td>
+                                <td class="text-end">
+                                    <a href="#" class="btn btn-md rounded font-sm" onclick="unlistProductOffer('${ele._id}')">Unlist</a>
+                                </td>`
+                    } else {
+                        producDetails += `<td>₹0.00</td>
+                                <td> - </td>
+                                <td> - </td>
+                                <td> - </td>
+                                <td class="text-end">
+                                    <!-- modal-form-start -->
+                                    <button type="button" class="btn btn-primary"  onclick="offerModal('${ele._id}')">Add offer</button>
+                                      
+                                    <!-- modal-form-end -->
+                                </td>
+                                </tr>                        
+                                
+                                `
+                    }
+                };
+                $('#productTableId').html(producDetails)
+
+            }
+        });
+    }
+
+</script>

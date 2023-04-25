@@ -73,6 +73,25 @@ router.route('/offerList')
 
 router.get('/offerExist', admincontroller.ajaxOfferExist)
 router.post('/unlistOffer', admincontroller.ajaxOfferUnlist)
+
+//product-Offers
+
+router.route('/productOffers')
+    .get(admincontroller.getProductofferPage)
+    .post(admincontroller.postProductofferPage)
+router.post('/OfferProductList', admincontroller.OfferProductList)
+router.post('/OfferProductUnList', admincontroller.unListProductOffer)
+router.post('/OfferProductSort', admincontroller.OfferProductSort)
+
+
+
+//coupons
+router.route('/coupons')
+    .get(admincontroller.getCouponPage)
+    .post(admincontroller.postCoupon)
+router.post('/unlistCoupon', admincontroller.ajaxUnlistCoupon)
+
+
 //logout
 
 router.get('/logout', adminauth.adminAuth, admincontroller.getAdminLogout)

@@ -114,7 +114,7 @@ function quantityControl(e, quantity, button) {
 //cart quantity
 
 function cartquantityplus(id, priceOfitem, subtotalOfItems, tot_qty) {
-
+  removeCoupon()
   let element = document.getElementById(id);
   let quantity1 = element.innerHTML
 
@@ -157,7 +157,7 @@ function cartquantityplus(id, priceOfitem, subtotalOfItems, tot_qty) {
 
 
 function cartquantitydown(id, priceOfitem, subtotalOfItems, tot_qty) {
-
+  removeCoupon()
   let element = document.getElementById(id);
   let quantity1 = element.innerHTML
 
@@ -202,7 +202,7 @@ function cartquantitydown(id, priceOfitem, subtotalOfItems, tot_qty) {
 function deleteProduct(id) {
 
   console.log(id);
-
+  removeCoupon()
   $.ajax({
     url: '/deletecartItem',
     type: 'GET',

@@ -852,6 +852,7 @@ module.exports = {
                             mobile: "$userDetails.phonenumber",
                             orderID: "$orders._id",
                             productArrayDetails: "$orders.productDetails",
+                            couponDiscount: "$orders.couponDiscount",
                             paymentMethod: "$orders.paymentMethod",
                             paymentStatus: "$orders.paymentStatus",
                             cancellationReason: "$orders.cancellationReason",
@@ -903,6 +904,7 @@ module.exports = {
                             product_unitPrice: "$productArrayDetails.perUnitPrice",
                             product_quantity: "$productArrayDetails.quantity",
                             product_subTotal: "$productArrayDetails.sub_total",
+                            couponDiscount:1,
                             paymentMethod: 1,
                             paymentStatus: 1,
                             totalPrice: 1,
@@ -960,6 +962,7 @@ module.exports = {
                             product_unitPrice:1,
                             product_quantity: 1,
                             product_subTotal: 1,
+                            couponDiscount :1,
                             paymentMethod: 1,
                             paymentStatus: 1,
                             cancellationReason: 1,
@@ -981,6 +984,7 @@ module.exports = {
                             email: { $first: "$email" },
                             mobile: { $first: "$mobile" },
                             paymentMethod: { $first: "$paymentMethod" },
+                            couponDiscount: { $first: "$couponDiscount" },
                             paymentStatus: { $first: "$paymentStatus" },
                             cancellationReason: { $first: "$cancellationReason" },
                             totalPrice: { $first: "$totalPrice" },
@@ -1211,21 +1215,67 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
 
             try {
-               const categoryExist = await admin.offer.updateOne({'_id': ObjectId(offer.offfeID)},{$set :{"offerStatus":false}})
-                console.log("categoryExist : ",categoryExist);
                 
-                   await admin.product.updateMany(
-                    { 'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory },
-                    
-                        {
-                            $unset: {
-                                discountPrice: "",
-                                discountPercentage: "",
-                                offerStatus :""
+                let products = await admin.product.findOne(
+                    {'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory,productOfferStatus :true},
+                    {"productOfferPercentage":1})
+                console.log("products discountPercentage : ",products);
+                if(products){
+                    await admin.offer.updateOne({'_id': ObjectId(offer.offfeID)},{$set :{"offerStatus":false}})
+                    await admin.product.updateOne(
+                        { 'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory},
+                        [
+                            {
+                                $set: {
+                                    discountPrice: {
+                                        $floor: {
+                                            $multiply: [
+                                                "$price",
+                                                {
+                                                    $subtract: [
+                                                        1,
+                                                        { $divide: [products.productOfferPercentage, 100] }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    discountPercentage: "",
+                                     offerStatus :""
+                                }
                             }
-                        }
-                    
-                )
+                        ]
+                    )
+                    await admin.product.updateMany(
+                        { 'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory,productOfferStatus :false },
+                        
+                            {
+                                $unset: {
+                                    discountPrice: "",
+                                    discountPercentage: "",
+                                    offerStatus :""
+                                }
+                            }
+                        
+                    )
+                }else{
+                    await admin.offer.updateOne({'_id': ObjectId(offer.offfeID)},{$set :{"offerStatus":false}})
+                    console.log("test check");
+                     await admin.product.updateMany(
+                         { 'gender': offer.gender, 'catagory': offer.category, 'sub_catagory': offer.subcategory },
+                         
+                             {
+                                 $unset: {
+                                     discountPrice: "",
+                                     discountPercentage: "",
+                                     offerStatus :""
+                                 }
+                             }
+                         
+                     )
+                }
+
+
                 resolve({response:true})
 
             } catch (err) {
@@ -1256,4 +1306,209 @@ module.exports = {
         })
 
     },
+
+    //product-offer
+
+    getProductoffer : () => {
+        
+        return new Promise(async (resolve, reject) => {
+
+            try {
+               let products = []
+               products = await admin.product.find({})
+                console.log("products OfferProductList : ",products);
+                resolve(products)
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    },
+
+
+    OfferProductList : (categoryDetails) => {
+        
+        return new Promise(async (resolve, reject) => {
+
+            try {
+               let products = []
+               products = await admin.product.find({gender:categoryDetails.gender,catagory:categoryDetails.category,sub_catagory:categoryDetails.subcategory})
+                console.log("products OfferProductList : ",products);
+                resolve(products)
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    },
+
+    unListProductOffer : (offerDetails) => {
+        
+        return new Promise(async (resolve, reject) => {
+
+            try {
+                let products = await admin.product.findOne({_id : ObjectId(offerDetails.proId),offerStatus :true},{"discountPercentage":1})
+                console.log("products discountPercentage : ",products);
+                if(products){
+                    await admin.product.updateOne(
+                        { _id : ObjectId(offerDetails.proId)},
+                        [
+                            {
+                                $set: {
+                                    discountPrice: {
+                                        $floor: {
+                                            $multiply: [
+                                                "$price",
+                                                {
+                                                    $subtract: [
+                                                        1,
+                                                        { $divide: [products.discountPercentage, 100] }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    productOfferPercentage: 0,
+                                    productOfferStatus :false,
+                                    productofferExpiry :''
+                                }
+                            }
+                        ]
+                    )
+                }else{
+                    await admin.product.updateOne({_id : ObjectId(offerDetails.proId)},{$set:{productOfferStatus :false,productOfferPercentage:0,productofferExpiry:'',discountPrice :0}})
+                }
+                resolve({ok:true})
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    },
+
+    OfferProductSort: (status)=>{
+        console.log("offerStatus : ",status.offerStatus);
+        let response =[]
+        return new Promise(async (resolve, reject) => {
+
+            try {
+                if(status.offerStatus === "allProducts"){
+                    response = await admin.product.find({})
+                }else if(status.offerStatus === "OfferProducts"){
+                    response = await admin.product.find({productOfferStatus:true})
+                }
+                resolve(response)
+            } catch (err) {
+               reject("unable to load content")
+            }
+        })
+    },
+
+
+
+    postProductofferPage : (offerDetails)=>{
+        console.log("offerDetails : ",offerDetails);
+        let percentage = parseInt(offerDetails.percentage)
+        return new Promise(async (resolve, reject) => {
+
+            try {
+                let products = await admin.product.findOne({_id : ObjectId(offerDetails.proId),productOfferStatus :false})
+                if(products){
+                    await admin.product.updateOne(
+                        { _id : ObjectId(offerDetails.proId)},
+                        [
+                            {
+                                $set: {
+                                    discountPrice: {
+                                        $floor: {
+                                            $multiply: [
+                                                "$price",
+                                                {
+                                                    $subtract: [
+                                                        1,
+                                                        { $divide: [percentage, 100] }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    productOfferPercentage: offerDetails.percentage,
+                                    productOfferStatus :true,
+                                    productofferExpiry :offerDetails.endDate
+                                }
+                            }
+                        ]
+                    )
+                }
+
+                resolve({ok:true})
+            } catch (err) {
+                console.log(err);
+            }
+        })
+    },
+
+
+    //coupon
+
+    couponList : () => {
+       
+        return new Promise(async (resolve, reject) => {
+
+            try {
+               let response = await admin.coupon.find({})
+               for(let i = 0 ;i<response.length;i++){
+                response[i].endDate = moment(response[i].endDate).format('Do MMMM YYYY');
+               }
+               resolve(response)
+
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    },
+
+    postCoupon : (couponDetails) => {
+       
+        return new Promise(async (resolve, reject) => {
+
+            try {
+                const couponCode = Math.random().toString(36).substring(2, 10);
+                console.log("couponCode : ",couponCode,couponDetails);
+
+                const coupon = new admin.coupon({
+                    discountPercentage: couponDetails.discountPercentage,
+                    maxDiscountAmount : couponDetails.maxDiscountAmount,
+                    minAmount : couponDetails.minAmount,
+                    category : couponDetails.category,
+                    couponCode : couponCode,
+                    endDate : new Date(couponDetails.endDate),
+                    description : couponDetails.description
+                })
+                await coupon.save()
+                resolve()
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+    },
+
+    unlistCoupon: (couponCode) => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const couponStatus = await admin.coupon.updateOne({ couponCode: couponCode }, { $set: { couponStatus: false } });
+            console.log("couponStatus :", couponStatus);
+            if (couponStatus.modifiedCount === 1) {
+              resolve({ ok: true });
+            }
+          } catch (err) {
+            console.log(err);
+            reject("coupon unlist failed..!");
+          }
+        });
+      },
+      
+
 }   
