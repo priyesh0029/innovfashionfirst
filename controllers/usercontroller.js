@@ -15,10 +15,8 @@ module.exports = {
                 user = req.session.user.username
                 let cartCount = req.session.user.cartCount
                 let wishListCount = req.session.user.wishListCount
-                console.log("getHOme response : ",response);
                 res.render('user/user', { headerStatus: true, user, cartCount, wishListCount });
             } else {
-                console.log("getHOme response : ",response.newAdded,"response.newAdded : ",response.newAdded);
                 res.render('user/user', { headerStatus: false });
             }
         })
