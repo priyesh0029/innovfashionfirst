@@ -416,7 +416,7 @@ module.exports = {
                 }
 
                 if (sortType === 'featured' || sortType === 'popular') {
-                    resolve(response[0]?.products)
+                    resolve(response[0] && response[0].products)
                 } else {
                     response = JSON.parse(JSON.stringify(response))
                     resolve(response)
