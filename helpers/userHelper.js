@@ -49,9 +49,9 @@ module.exports = {
                 const Email = userData.email
                 const phone = userData.phonenumber
                 let userExist = await user.user.find({ $or: [{ email: Email }, { phonenumber: phone }] })
-                let userRefferal = await user.user.find({refferalCode :userData.refferalCode})
-                console.log("userRefferal : ",userRefferal);
-                if(userRefferal){
+                let userRefferal = await user.user.find({ refferalCode: userData.refferalCode })
+                console.log("userRefferal : ", userRefferal);
+                if (userRefferal) {
                     const tranObj = {
                         orderId: 'Refferal bonus',
                         amount: 100,
@@ -63,16 +63,16 @@ module.exports = {
                         existingWallet.balance += tranObj.amount;
                         existingWallet.transactions.push(tranObj); // Add new transaction to array
                         await existingWallet.save();
-    
+
                     } else {
-    
+
                         const newWallet = new user.wallet({
                             userId: userRefferal[0]._id,
                             balance: tranObj.amount,
                             transactions: [tranObj] // Create new array with the new transaction
                         })
                         await newWallet.save();
-    
+
                     }
                 }
                 console.log("userExist :", userExist);
@@ -88,13 +88,13 @@ module.exports = {
                         email: userData.email,
                         phonenumber: userData.phonenumber,
                         Password: hashedPassword,
-                        refferalCode : refferal
+                        refferalCode: refferal
 
                     })
 
-                    await data.save(data).then(async(data) => {
+                    await data.save(data).then(async (data) => {
                         console.log(data);
-                        if(data){
+                        if (data) {
                             const tranObj = {
                                 orderId: 'Refferal bonus',
                                 amount: 50,
@@ -103,21 +103,21 @@ module.exports = {
                             }
                             const existingWallet = await user.wallet.findOne({ "userId": data._id });
                             if (existingWallet === null) {
-                               
+
                                 const newWallet = new user.wallet({
                                     userId: data._id,
                                     balance: tranObj.amount,
                                     transactions: [tranObj] // Create new array with the new transaction
                                 })
                                 await newWallet.save();
-            
+
                             }
                         }
                         response = { data, status: true }
                         return resolve(response)
                     })
                 }
-                
+
 
             } catch (err) {
                 console.log(err);
@@ -209,17 +209,23 @@ module.exports = {
     },
 
 
-    ShopProducts: () => {
+    ShopProducts: (pageNo) => {
 
+        console.log("pageNo : ", pageNo);
+        if (pageNo === undefined) {
+            pageNo = 1
+        }
         let response = {}
 
         return new Promise(async (resolve, reject) => {
 
             try {
 
-                response.product = await user.product.find({})
+                response.product = await user.product.find({}).skip(pageNo * 6 - 6).limit(pageNo * 6)
                 response.category = await user.categories.findOne({}, { _id: 0 })
-                console.log("response.category : ", response.category);
+                response.productCount = await user.product.countDocuments({});
+
+                console.log("response.category : ", response.category, response.productCount);
                 resolve(response)
 
             } catch (err) {
@@ -228,9 +234,12 @@ module.exports = {
         })
     },
 
-    subCatFilter: (gender, category, subcategory, sortType, sortType2 = null) => {
+    subCatFilter: (gender, category, subcategory, sortType, sortType2 = null, pageNo) => {
         let response = {}
-
+        if (pageNo === undefined) {
+            pageNo = 1
+        }
+        console.log("subCatFilter pageNO : ", pageNo);
         return new Promise(async (resolve, reject) => {
 
             try {
@@ -264,6 +273,8 @@ module.exports = {
                                 ]
                             }
                         },
+                        // { $skip: pageNo * 6 - 6 }, // skip the first 10 documents
+                        // { $limit: pageNo * 6 }, // limit to 5 documents
                         {
                             $group: {
                                 _id: "$productDetails.product_id",
@@ -761,20 +772,28 @@ module.exports = {
         })
     },
 
-    viewWallet: (email) => {
+    viewWallet: (email,pageNo) => {
+        console.log(" pageNo:",pageNo);
+        if (pageNo === '') {
+            pageNo = 1
+        }
+        let response = {}
         return new Promise(async (resolve, reject) => {
 
             try {
                 let userInfo = await user.user.findOne({ email: email })
                 let userID = userInfo._id
-                console.log("userID : ",userID);
-                let WalletInfo = await user.wallet.findOne({ "userId": userID })
-                console.log("WalletInfo 1 : ", WalletInfo.transactions.date, typeof (WalletInfo.transactions.date));
-                for (let i = 0; i < WalletInfo.transactions.length; i++) {
-                    WalletInfo.transactions[i].date = moment(WalletInfo.transactions[i].date).format('MMMM Do YYYY, h:mm:ss a');
+                console.log("userID : ", userID);
+                wallet = await user.wallet.findOne({ "userId": userID })
+                response.totaltran = wallet.transactions.length
+                // console.log("WalletInfo 1 : ",response.totaltran);
+                for (let i = 0; i < wallet.transactions.length; i++) {
+                    wallet.transactions[i].date = moment(wallet.transactions[i].date).format('MMMM Do YYYY, h:mm:ss a');
                 }
-                console.log("WalletInfo 2: ", WalletInfo.transactions);
-                resolve(WalletInfo)
+                response.balance = wallet.balance
+                response.transactions = wallet.transactions.reverse().slice((pageNo * 6 - 6),(pageNo * 6) )
+                console.log("WalletInfo 2: ",response);
+                resolve(response)
             } catch (err) {
                 reject("unable to load wallet info")
             }
@@ -804,7 +823,7 @@ module.exports = {
                         paymentMethod: orderDetails.payment_option,
                         paymentStatus: paymentInfo,
                         totalPrice: cartItems.grand_Total,
-                        couponDiscount:cartItems.couponDiscount ,
+                        couponDiscount: cartItems.couponDiscount,
                         couponCode: cartItems.couponCode,
                         totalQuantity: cartItems.count,
                         shippingAddress: orderDetails.addressId
@@ -1130,7 +1149,7 @@ module.exports = {
                             _id: "$orders._id",
                             paymentMethod: "$orders.paymentMethod",
                             paymentStatus: "$orders.paymentStatus",
-                            couponDiscount :"$orders.couponDiscount",
+                            couponDiscount: "$orders.couponDiscount",
                             refundStatus: "$orders.refundStatus",
                             returnedReason: "$orders.returnedReason",
                             cancellationReason: "$orders.cancellationReason",
@@ -1390,7 +1409,7 @@ module.exports = {
 
                         const coupons = await user.coupon.find({
                             category: category._id,
-                            couponStatus : true,
+                            couponStatus: true,
                             minAmount: { $lte: category.perCategoryTotal }
                         });
                         for (let i = 0; i < coupons.length; i++) {
@@ -1418,27 +1437,27 @@ module.exports = {
                 let grantTotal = parseInt(discountInfo.grandTotal)
                 let coupon = discountInfo.coupenCode
 
-                let couponUsed = await user.user.findOne({userId: userID,usedCoupons: { $in: [coupon] }})
-                console.log("couponUsed : ",couponUsed);
+                let couponUsed = await user.user.findOne({ userId: userID, usedCoupons: { $in: [coupon] } })
+                console.log("couponUsed : ", couponUsed);
 
-                if(couponUsed){
-                    resolve({exist:true})
-                }else{
-                    let couponCheck = await user.cart.findOne({ userId: userID, couponCode: { $ne: null } })
-                if (couponCheck) {
-
-                    await user.user.updateOne({ userId: userID, usedCoupons: { $exists: true, $ne: [] } }, { $pop: { usedCoupons: 1 } });
-                    await user.user.updateOne({ userId: userID }, { $push: { "usedCoupons": coupon } });
-
+                if (couponUsed) {
+                    resolve({ exist: true })
                 } else {
-                    await user.user.updateOne({ userId: userID }, { $push: { "usedCoupons": coupon } })
-                 
-                }
-                await user.cart.updateOne({ userId: userID }, { $set: { "couponDiscount": couponDiscount, "couponCode": coupon, "grand_Total": grantTotal } })
-                resolve({ok:true})
+                    let couponCheck = await user.cart.findOne({ userId: userID, couponCode: { $ne: null } })
+                    if (couponCheck) {
+
+                        await user.user.updateOne({ userId: userID, usedCoupons: { $exists: true, $ne: [] } }, { $pop: { usedCoupons: 1 } });
+                        await user.user.updateOne({ userId: userID }, { $push: { "usedCoupons": coupon } });
+
+                    } else {
+                        await user.user.updateOne({ userId: userID }, { $push: { "usedCoupons": coupon } })
+
+                    }
+                    await user.cart.updateOne({ userId: userID }, { $set: { "couponDiscount": couponDiscount, "couponCode": coupon, "grand_Total": grantTotal } })
+                    resolve({ ok: true })
                 }
 
-                
+
             } catch (err) {
                 console.log(err);
             }

@@ -1,6 +1,5 @@
-
 <section>
-  
+
 
   <!-- main calss row flex -->
 
@@ -20,7 +19,7 @@
                   <ul>
                     <li class="has-children ">
                       <div class="filterDownNew" style="width: 12em;"><i class="fi-rs-apps-sort"></i>Sort by: <span>
-                         <i class="fi-rs-angle-small-down"></i></span></div>
+                          <i class="fi-rs-angle-small-down"></i></span></div>
                       <div class="dropdown-menu" style="min-width: fit-content;
                             top: 100%;
                             left: 0;
@@ -65,15 +64,15 @@
                         </div>
                         <div class="product-action-1">
                           <% if(locals.headerStatus) {%>
-                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist(event,'<%= item._id %>')"><i
-                              class="fi-rs-heart"></i></a>
+                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href=""
+                              onclick="addWishlist(event,'<%= item._id %>')"><i class="fi-rs-heart"></i></a>
 
                             <%} else {%>
-                              <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist2(event)"><i
-                                class="fi-rs-heart"></i></a>
+                              <a aria-label="Add To Wishlist" class="action-btn hover-up" href=""
+                                onclick="addWishlist2(event)"><i class="fi-rs-heart"></i></a>
                               <%} %>
-                          
-                          
+
+
                         </div>
                         <div class="product-badges product-badges-position product-badges-mrg" style="z-index: 100;">
                           <span class="hot">Hot</span>
@@ -96,12 +95,12 @@
                           </span>
                         </div>
                         <%if(item.discountPrice){%>
-                              <div class="product-price">
-                                <span>
-                                  ₹<%= item.discountPrice%>
-                                </span>
-                                <span class="old-price">₹<%= item.price%></span>
-                              </div>
+                          <div class="product-price">
+                            <span>
+                              ₹<%= item.discountPrice%>
+                            </span>
+                            <span class="old-price">₹<%= item.price%></span>
+                          </div>
                           <%}else{%>
                             <div class="product-price">
                               <span>
@@ -110,25 +109,28 @@
                               <span class="old-price">₹1999.00</span>
                             </div>
                             <%}%>
-                        <div class="product-action-1 show">
-                          <% if(locals.headerStatus) {%>
-                            <%if(item.product_details[0].quantity !== 0){%>
+                              <div class="product-action-1 show">
+                                <% if(locals.headerStatus) {%>
+                                  <%if(item.product_details[0].quantity !==0){%>
 
-                              <%if(item.discountPrice){%>
-                                <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
-                                  onclick="addTocart('<%= item._id %>','<%= item.discountPrice%>')"></i></div>
-                            <%}else{%>
-                              <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
-                                onclick="addTocart('<%= item._id %>','<%= item.price%>')"></i></div>
-                              <%}%>
-                            
-                                <%}%>
-                            <%} else {%>
-                              <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
-                                  class="fi-rs-shopping-bag-add" onclick="addTocart2()"></i></div>
-                              <%} %>
+                                    <%if(item.discountPrice){%>
+                                      <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                                          class="fi-rs-shopping-bag-add"
+                                          onclick="addTocart('<%= item._id %>','<%= item.discountPrice%>')"></i></div>
+                                      <%}else{%>
+                                        <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                                            class="fi-rs-shopping-bag-add"
+                                            onclick="addTocart('<%= item._id %>','<%= item.price%>')"></i></div>
+                                        <%}%>
 
-                        </div>
+                                          <%}%>
+                                            <%} else {%>
+                                              <div aria-label="Add To Cart" class="action-btn hover-up"
+                                                style="z-index: 100;"><i class="fi-rs-shopping-bag-add"
+                                                  onclick="addTocart2()"></i></div>
+                                              <%} %>
+
+                              </div>
                       </div>
                     </div>
                   </div>
@@ -140,31 +142,19 @@
             <!--pagination-->
             <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
               <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
-                  <li class="page-item active">
-                    <a class="page-link" href="#">01</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">02</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">03</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link dot" href="#">...</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">16</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a>
-                  </li>
+                <ul class="pagination justify-content-start" id="productFilterpaginationId">
+                  <%for(let i=1;i<=Math.ceil(response.productCount/6);i++){%>
+                    <li class="page-item" id="pagebtn-<%=i%>"><a class="page-link" href="#"
+                        onclick="productPagination(event,'<%=i%>','<%=Math.ceil(response.productCount/6)%>')">
+                        <%=i%>
+                      </a></li>
+                    <%}%>
                 </ul>
               </nav>
             </div>
           </div>
           <div class="col-lg-3 primary-sidebar sticky-sidebar">
-           
+
             <div class="categori-dropdown-wrap d-sm-none d-lg-block" style="margin-bottom: 5em;">
               <ul>
                 <li class="has-children ">
@@ -288,7 +278,7 @@
                   </div>
                 </li>
                 <li class="has-children">
-                  <a href=""><i class="evara-font-tshirt" ></i>Kids's Clothing</a>
+                  <a href=""><i class="evara-font-tshirt"></i>Kids's Clothing</a>
                   <div class="dropdown-menu">
                     <ul class="mega-menu d-lg-flex">
                       <li class="mega-menu-col col-lg-7">
@@ -351,7 +341,7 @@
             </div>
             <!-- </div> -->
             <!-- Fillter By Price -->
-            
+
             <!-- Product sidebar Widget -->
 
 
@@ -506,39 +496,41 @@
   </div>
 </section>
 <script>
-function subCatFilter(gender=null,category=null,subcategory=null,sortType){
+  function subCatFilter(gender = null, category = null, subcategory = null, sortType,pageNo) {
 
-  console.log("subCatFilter function invoke : ",gender,category,subcategory,sortType);
-  
-$.ajax({
-  url: '/subCatFilter',
-    type: 'post',
-    data: {
+    console.log("subCatFilter function invoke : ", gender, category, subcategory, sortType);
+
+    $.ajax({
+      url: '/subCatFilter',
+      type: 'post',
+      data: {
         gender,
         category,
         subcategory,
-        sortType
-    },
-    success: function (response) {
-      console.log("subCatFilter function invoke2 : ",gender,category,subcategory,sortType);
-       console.log("response1: ",response);
-       document.getElementById("noOfProducts").innerHTML =  `We found <strong class="text-brand" > ${response.length}</strong> items for
+        sortType,
+        pageNo
+      },
+      success: function (response) {
+        console.log("subCatFilter function invoke2 : ", gender, category, subcategory, sortType);
+        console.log("response1: ", response);
+        document.getElementById("noOfProducts").innerHTML = `We found <strong class="text-brand" > ${response.length}</strong> items for
               you!`
-      if(gender !== null && category !== null && subcategory !==null){
-      document.getElementById("sortProductsDropdown").innerHTML =  `
+        if (gender !== null && category !== null && subcategory !== null) {
+          document.getElementById("sortProductsDropdown").innerHTML = `
                         <li onclick="priceSort('${response[0].gender}','${response[0].catagory}','${response[0].sub_catagory}','low')">Price: Low to High</li>
                         <li onclick="priceSort('${response[0].gender}','${response[0].catagory}','${response[0].sub_catagory}','high')">Price: High to Low</li> `
-      }      
-     let productFilterPage = ''
-     for (let i = 0; i < response.length; i++) {
-       const ele = response[i];
-       let productPrice 
-       if(ele.discountPrice){
-        productPrice = ele.discountPrice
-       }else{
-        productPrice = ele.price
-       }
-    productFilterPage += `
+        }
+        let productFilterPage = ''
+        let productFilterPagination=''
+        for (let i = 0; i < response.length; i++) {
+          const ele = response[i];
+          let productPrice
+          if (ele.discountPrice) {
+            productPrice = ele.discountPrice
+          } else {
+            productPrice = ele.price
+          }
+          productFilterPage += `
     <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                 <div class="product-cart-wrap mb-30">
                   <div class="product-img-action-wrap">
@@ -580,40 +572,40 @@ $.ajax({
                         <span>90%</span>
                       </span>
                     </div>`
-                    if(ele.discountPrice){
-                productFilterPage += ` <div class="product-price">
+          if (ele.discountPrice) {
+            productFilterPage += ` <div class="product-price">
                                 <span>
                                   ₹<%='${ele.discountPrice}'%>
                                 </span>
                                 <span class="old-price">₹<%='${ele.price}'%></span>
                               </div>`
-                          }else{
-                 productFilterPage += `<div class="product-price">
+          } else {
+            productFilterPage += `<div class="product-price">
                               <span>
                                 ₹<%='${ele.price}'%>
                               </span>
                               <span class="old-price">₹1999.00</span>
                             </div>`
-                            }  
-                          
-                            
-                           
-              productFilterPage += `<div class="product-action-1 show">
+          }
+
+
+
+          productFilterPage += `<div class="product-action-1 show">
                       <% if(locals.headerStatus) {%>`
-                        
-                        if(ele.discountPrice){
-                productFilterPage += ` 
+
+          if (ele.discountPrice) {
+            productFilterPage += ` 
                   <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
                             onclick="addTocart('${ele._id}','${ele.discountPrice}')"></i></div>`
-                          }else{
-                 productFilterPage += ` 
+          } else {
+            productFilterPage += ` 
                   <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
                             onclick="addTocart('${ele._id}','${ele.price}')"></i></div>`
-                            }  
+          }
 
-                        
 
-               productFilterPage += `  <%} else {%>
+
+          productFilterPage += `  <%} else {%>
                           <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
                               class="fi-rs-shopping-bag-add" onclick="addTocart2()"></i></div>
                           <%} %>
@@ -623,51 +615,183 @@ $.ajax({
                 </div>
               </div>
  `
-  };
-  $('#productFilterPageId').html(productFilterPage)
-    }
-})
-}
+        };
+        $('#productFilterPageId').html(productFilterPage)
 
-function priceSort(gender,category,sub_category,sortType){
-  console.log("gender,category,sub_category,sortType : ",gender,category,sub_category,sortType);
-  subCatFilter(gender,category,sub_category,sortType)
-}
+        for(let i=1;i<=Math.ceil(response.length/6);i++){
+          productFilterPagination += `<li class="page-item" id="pagebtn-${i}"><a class="page-link" href="#"
+                        onclick="productPagination(event,'${i}','${Math.ceil(response.productCount/6)}')">
+                        ${i}
+                      </a></li>`
+                    }
+          $('#productFilterpaginationId').html(productFilterPagination)
+      }
+    })
+  }
 
-function allProductSort(sortCondition){
-  subCatFilter(null,null,null,sortCondition)
-}
+  function priceSort(gender, category, sub_category, sortType) {
+    console.log("gender,category,sub_category,sortType : ", gender, category, sub_category, sortType);
+    subCatFilter(gender, category, sub_category, sortType)
+  }
 
-function addTocart2() {
-swal({
-  title: "Please login to Continue!",
-  button: "OK",
-});
-}
+  function allProductSort(sortCondition) {
+    subCatFilter(null, null, null, sortCondition)
+  }
+
+  function addTocart2() {
+    swal({
+      title: "Please login to Continue!",
+      button: "OK",
+    });
+  }
 
 
 
-  
+
+</script>
+
+<script>
+
+  function productPagination(e, pageNo, totalPage) {
+    e.preventDefault()
+    console.log(pageNo);
+    $.ajax({
+      url: '/shop',
+      type: 'get',
+      data: {
+        pageNo
+      },
+      success: function (response) {
+        console.log("response : ", response);
+        for (let i = 1; i <= parseInt(totalPage); i++) {
+          let itemElement = document.getElementById('pagebtn-' + String(i))
+          itemElement.classList.remove('active');
+        }
+        let itemElement = document.getElementById('pagebtn-' + pageNo)
+        itemElement.classList.add('active');
+
+        let productListdiv = ''
+
+        for (let i = 0; i < response.product.length; i++) {
+          const ele = response.product[i];
+          let productPrice
+          if (ele.discountPrice) {
+            productPrice = ele.discountPrice
+          } else {
+            productPrice = ele.price
+          }
+          productListdiv += `
+    <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                <div class="product-cart-wrap mb-30">
+                  <div class="product-img-action-wrap">
+                    <div class="product-img product-img-zoom">
+                      <a href="/product-details/${ele._id}">
+                        <img class="default-img" src="/uploads/${ele.Image[0]}" alt="" />
+                        <img class="hover-img" src="/uploads/${ele.Image[3]}" alt="" />
+                      </a>
+                    </div>
+                    <div class="product-action-1">
+                      
+                      <% if(locals.headerStatus) {%>
+                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist(event,'${ele._id}')"><i
+                              class="fi-rs-heart"></i></a>
+
+                            <%} else {%>
+                              <a aria-label="Add To Wishlist" class="action-btn hover-up" href="" onclick="addWishlist2(event)"><i
+                                class="fi-rs-heart"></i></a>
+                              <%} %>
+                      
+                    </div>
+                    <div class="product-badges product-badges-position product-badges-mrg" style="z-index: 100;">
+                      <span class="hot">Hot</span>
+                    </div>
+                  </div>
+                  <div class="product-content-wrap">
+                    <div class="product-category">
+                      <a href="shop-grid-right.html">
+                        ${ele.catagory}
+                      </a>
+                    </div>
+                    <h2>
+                      <a href="shop-product-right.html">
+                        ${ele.product_name}
+                      </a>
+                    </h2>
+                    <div class="rating-result" title="90%">
+                      <span>
+                        <span>90%</span>
+                      </span>
+                    </div>`
+          if (ele.discountPrice) {
+            productListdiv += ` <div class="product-price">
+                                <span>
+                                  ₹<%='${ele.discountPrice}'%>
+                                </span>
+                                <span class="old-price">₹<%='${ele.price}'%></span>
+                              </div>`
+          } else {
+            productListdiv += `<div class="product-price">
+                              <span>
+                                ₹<%='${ele.price}'%>
+                              </span>
+                              <span class="old-price">₹1999.00</span>
+                            </div>`
+          }
+
+
+
+          productListdiv += `<div class="product-action-1 show">
+                      <% if(locals.headerStatus) {%>`
+
+          if (ele.discountPrice) {
+            productListdiv += ` 
+                  <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
+                            onclick="addTocart('${ele._id}','${ele.discountPrice}')"></i></div>`
+          } else {
+            productListdiv += ` 
+                  <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
+                            onclick="addTocart('${ele._id}','${ele.price}')"></i></div>`
+          }
+
+
+
+          productListdiv += `  <%} else {%>
+                          <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
+                              class="fi-rs-shopping-bag-add" onclick="addTocart2()"></i></div>
+                          <%} %>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+ `
+        };
+        $('#productFilterPageId').html(productListdiv)
+      }
+
+    })
+  }
+
 </script>
 
 
 <style>
-  .filterDownNew{
+  .filterDownNew {
     display: -webkit-box;
     display: -ms-flexbox;
-                      display: flex;
-                      -webkit-box-align: center;
-                      -ms-flex-align: center;
-                      align-items: center;
-                      background: #e8edf2;
-                      border: 1px solid #c6cfd8;
-                      color: #777;
-                      padding: 9px 16px;
-                      border-radius: 26px;
-                      -webkit-transition: all .3s ease 0s;
-                      transition: all .3s ease 0s;
-                      cursor: pointer;
-                      border: 1px solid #e2e9e1;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background: #e8edf2;
+    border: 1px solid #c6cfd8;
+    color: #777;
+    padding: 9px 16px;
+    border-radius: 26px;
+    -webkit-transition: all .3s ease 0s;
+    transition: all .3s ease 0s;
+    cursor: pointer;
+    border: 1px solid #e2e9e1;
   }
 </style>
 <!-- Vendor JS-->

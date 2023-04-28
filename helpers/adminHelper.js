@@ -1165,11 +1165,7 @@ module.exports = {
                     offerStatus :true
                 })
                 await categoryOffer.save()
-                }else{
-
                 }
-                
-
                 resolve()
 
             } catch (err) {

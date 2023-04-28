@@ -144,18 +144,26 @@ module.exports = {
     },
 
     getUserShop: (req, res) => {
-
-        userhelpers.ShopProducts().then((response) => {
+        let pageNo = req.query.pageNo
+        console.log(pageNo);
+        userhelpers.ShopProducts(pageNo).then((response) => {
 
             console.log("getUserShop : ", response);
+            
             if (req.session.user) {
                 let cartCount = req.session.user.cartCount
                 let wishListCount = req.session.user.wishListCount
-
-                console.log(cartCount);
-                res.render('user/shop', { headerStatus: true, user, cartCount, wishListCount, response })
+                if(pageNo === undefined){
+                    res.render('user/shop', { headerStatus: true, user, cartCount, wishListCount, response })
+                }else{
+                    res.status(200).json(response)
+                }
             } else {
-                res.render('user/shop', { headerStatus: false, response })
+                if(pageNo === undefined){
+                    res.render('user/shop', { headerStatus: false, response })
+                }else{
+                    res.status(200).json(response)
+                }
             }
         })
 
@@ -167,8 +175,10 @@ module.exports = {
         const category = req.body.category
         const subcategory = req.body.subcategory
         const sortType = req.body.sortType
-        console.log("subCatFilter req body : ", gender, category, subcategory, sortType);
+        const pageNo = req.body.pageNo
+        console.log("subCatFilter req body : ", gender, category, subcategory,sortType,pageNo);
         userhelpers.subCatFilter(gender, category, subcategory, sortType).then((response) => {
+            console.log("subCatFilter : ",response);
             res.status(200).json(response)
         })
 
@@ -466,10 +476,11 @@ module.exports = {
     },
 
     viewWallet : (req, res) => {
-
+        let pageNo = req.query.pageNo
+        console.log("pageNo : ",pageNo);
         const email = req.session.user.email
-        console.log(email);
-        userhelpers.viewWallet(email).then((response) => {
+        console.log(email,pageNo);
+        userhelpers.viewWallet(email,pageNo).then((response) => {
             res.status(200).json(response)
         }).catch((error)=>{
             res.status(400).json(error)

@@ -184,6 +184,13 @@
                                         
                                                     </div>
                                                 </div>
+                                                <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                                                    <nav aria-label="Page navigation example">
+                                                      <ul class="pagination justify-content-start" id="walletPaginationId">
+                                                       
+                                                      </ul>
+                                                    </nav>
+                                                  </div>
                                             </div>
                                         </div>
                                     
@@ -544,20 +551,24 @@ aria-hidden="true">
                                                                
                         `
                     };
+                    
                     $('#ordersListId').html(orderListdiv)
                 }
             })
         }
 
-        function viewWallet(){
+        function viewWallet(pageNo=null){
+            console.log("pageNo : ",pageNo);
+            
             $.ajax({
                 url: '/viewWallet',
                 type: 'get',
-                data: {},
+                data: {pageNo},
                 success: function (response) {
                    console.log(response);
                     document.getElementById("walletTotal").innerHTML = "Available Balance : ₹"+response.balance
                    let walletInfo = ''
+                   let walletPagination =''
 
                     for (let i = response.transactions.length-1; i >= 0; i--) {
                         const ele = response.transactions[i];
@@ -604,8 +615,16 @@ aria-hidden="true">
                 </div>
                                                                
                         `
+                    }
+                    for(let i=1;i<=Math.ceil(response.totaltran/6);i++){
+                      walletPagination += `<li class="page-item" id="pagebtn-${i}"><div class="page-link" href="#"
+                            onclick="viewWallet('${i}')" style ="min-width:3em">
+                            ${i}
+                        </div></li>`
                     };
+                     
                     $('#walletDetails').html(walletInfo)
+                    $('#walletPaginationId').html(walletPagination)
                 }
             })
         }
