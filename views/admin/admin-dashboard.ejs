@@ -17,7 +17,7 @@
               class="text-primary material-icons md-monetization_on"></i></span>
           <div class="text">
             <h6 class="mb-1 card-title">Revenue</h6>
-            <span>₹ <%=response?.dashBoard[0]?.totalRevenue%></span>
+            <span>₹ <%=response.dashBoard[0].totalRevenue%></span>
             <span class="text-sm"> Shipping fees are not included </span>
           </div>
         </article>
@@ -31,7 +31,7 @@
           <div class="text">
             <h6 class="mb-1 card-title">Orders</h6>
             <span>
-              <%=response?.dashBoard[0]?.orderCount%>
+              <%=response.dashBoard[0].orderCount%>
             </span>
             <span class="text-sm"> Excluding orders in transit </span>
           </div>
@@ -46,7 +46,7 @@
           <div class="text">
             <h6 class="mb-1 card-title">Products</h6>
             <span>
-              <%=response?.productCount%>
+              <%=response.productCount%>
             </span>
             <span class="text-sm"> In 19 Categories </span>
           </div>
@@ -60,7 +60,7 @@
               class="text-info material-icons md-shopping_basket"></i></span>
           <div class="text">
             <h6 class="mb-1 card-title">Monthly Earning</h6>
-            <span>₹ <%=response?.dashBoard[0]?.monthlyEarning%></span>
+            <span>₹ <%=response.dashBoard[0].monthlyEarning%></span>
             <span class="text-sm"> Based in your local time. </span>
           </div>
         </article>
@@ -76,7 +76,7 @@
           <div id="chartdiv"></div>
         </article>
         <div id="chartData" class="hidden">
-          <%=JSON.stringify(response?.yearlySalesgraph)%></button>
+          <%=JSON.stringify(response.yearlySalesgraph)%></button>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@
           <div id="chartdiv2"></div>
         </article>
         <div id="chartData2" class="hidden">
-          <%=JSON.stringify(response?.categoryCount)%></button>
+          <%=JSON.stringify(response.categoryCount)%></button>
         </div>
       </div>
 
