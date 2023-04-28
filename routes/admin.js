@@ -63,6 +63,9 @@ router.get('/order-proDetails', admincontroller.orderProDetails)
 
 router.post('/amendOrderStatus', admincontroller.amendOrderStatus)
 
+router.post('/sortOrderStatus', admincontroller.sortOrderStatus)
+
+
 //offers
 router.route('/offers')
     .get(admincontroller.getofferPage)

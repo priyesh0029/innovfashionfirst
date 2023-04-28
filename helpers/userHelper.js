@@ -58,7 +58,7 @@ module.exports = {
                         date: new Date(),
                         type: 'credit'
                     }
-                    const existingWallet = await user.wallet.findOne({ "userId": userRefferal[0]._id });
+                    const existingWallet = await user.wallet.findOne({ "userId": userRefferal[0]?._id });
                     if (existingWallet !== null) {
                         existingWallet.balance += tranObj.amount;
                         existingWallet.transactions.push(tranObj); // Add new transaction to array
@@ -274,7 +274,7 @@ module.exports = {
                             }
                         },
                         // { $skip: pageNo * 6 - 6 }, // skip the first 10 documents
-                        // { $limit: pageNo * 6 }, // limit to 5 documents
+                        // { $limit: 10 }, // limit to 5 documents
                         {
                             $group: {
                                 _id: "$productDetails.product_id",

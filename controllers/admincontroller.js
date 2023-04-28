@@ -245,9 +245,15 @@ module.exports = {
     },
 
     getOrderDetails: (req, res) => {
-        adminHelpers.getOrderDetails().then((response) => {
-
-            res.render('admin/orders', { adminStatus, layout: "adminLayout", response })
+        pageNo = req.query.pageNo
+        console.log("pageNo : ",pageNo);
+        adminHelpers.getOrderDetails(pageNo).then((response) => {
+            console.log("response orderdetails : ",response);
+            if(pageNo === undefined){
+                res.render('admin/orders', { adminStatus, layout: "adminLayout", response })
+            }else{
+                res.status(200).json(response)
+            }
         })
     },
     orderProDetails: (req, res) => {
@@ -277,6 +283,19 @@ module.exports = {
             } else {
                 res.status(200).json(true)
             }
+        }).catch((error) => {
+            console.log(error);
+            res.status(400).json({ err1: error })
+        })
+    },
+
+    sortOrderStatus : (req, res) => {
+        const orderStatus = req.body.orderStatus
+        console.log(orderStatus);
+
+        adminHelpers.sortOrderStatus(orderStatus).then((response) => {
+            console.log("sortOrderStatus : ",response);
+            res.status(200).json(response)
         }).catch((error) => {
             console.log(error);
             res.status(400).json({ err1: error })

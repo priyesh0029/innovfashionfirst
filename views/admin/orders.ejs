@@ -1,34 +1,23 @@
 <body>
 
-
     <section class="content-main">
         <div class="content-header">
             <div>
                 <h2 class="content-title card-title">Order List </h2>
             </div>
-            <div>
-                <input type="text" placeholder="Search order ID" class="form-control bg-white">
-            </div>
         </div>
         <div class="card mb-4">
             <header class="card-header">
                 <div class="row gx-3">
-                    <div class="col-lg-4 col-md-6 me-auto">
-                        <input type="text" placeholder="Search..." class="form-control">
-                    </div>
                     <div class="col-lg-2 col-6 col-md-3">
-                        <select class="form-select">
-                            <option>Status</option>
-                            <option>Active</option>
-                            <option>Disabled</option>
-                            <option>Show all</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-6 col-md-3">
-                        <select class="form-select">
-                            <option>Show 20</option>
-                            <option>Show 30</option>
-                            <option>Show 40</option>
+                        <select class="form-select" id="orderStatusId">
+                            <option>select order status</option>
+                            <option value="pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
+                            <option value="showall">Show all</option>
                         </select>
                     </div>
                 </div>
@@ -48,42 +37,42 @@
                                 <th scope="col" class="text-end"> Action </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <% for(let i=0;i < response.length;i++){%>
+                        <tbody id="sortedTable">
+                            <% for(let i=0;i < response.orderDetails.length;i++){%>
                                 <tr>
                                     <td>
-                                        <%=response[i].ordersId %>
+                                        <%=response.orderDetails[i].ordersId %>
                                     </td>
                                     <td><b>
-                                            <%=response[i].firstname %>
-                                                <%=response[i].lastName %>
+                                            <%=response.orderDetails[i].firstname %>
+                                                <%=response.orderDetails[i].lastName %>
                                         </b></td>
                                     <td>
-                                        <%=response[i].email %>
+                                        <%=response.orderDetails[i].email %>
                                     </td>
-                                    <td>₹<%=response[i].totalPrice %>
+                                    <td>₹<%=response.orderDetails[i].totalPrice %>
                                     </td>
-                                    <%if(response[i].orderStatus==='cancelled' ){%>
+                                    <%if(response.orderDetails[i].orderStatus==='cancelled' ){%>
                                         <td><span class="badge rounded-pill alert-danger text-danger">
-                                                <%=response[i].orderStatus %>
+                                                <%=response.orderDetails[i].orderStatus %>
                                             </span></td>
-                                        <%}else if(response[i].orderStatus==='Delivered' ){%>
+                                        <%}else if(response.orderDetails[i].orderStatus==='Delivered' ){%>
                                             <td><span class="badge rounded-pill alert-success text-success">
-                                                    <%=response[i].orderStatus %>
+                                                    <%=response.orderDetails[i].orderStatus %>
                                                 </span></td>
                                             <%}else{%>
                                                 <td><span class="badge rounded-pill alert-warning">
-                                                        <%=response[i].orderStatus %>
+                                                        <%=response.orderDetails[i].orderStatus %>
                                                     </span></td>
                                                 <%}%>
                                                     <td><span class="badge rounded-pill alert-warning">
-                                                            <%=response[i].paymentStatus %>
+                                                            <%=response.orderDetails[i].paymentStatus %>
                                                         </span></td>
                                                     <td>
-                                                        <%=response[i].createdAt %>
+                                                        <%=response.orderDetails[i].createdAt %>
                                                     </td>
                                                     <td class="text-end">
-                                                        <a href="/admin/order-proDetails?orderid=<%=response[i].ordersId %>&email=<%=response[i].email %>"
+                                                        <a href="/admin/order-proDetails?orderid=<%=response.orderDetails[i].ordersId %>&email=<%=response.orderDetails[i].email %>"
                                                             class="btn btn-md rounded font-sm">View</a>
 
                                                     </td>
@@ -115,14 +104,13 @@
         </div> <!-- card end// -->
         <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
-                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                    <li class="page-item"><a class="page-link" href="#"><i
-                                class="material-icons md-chevron_right"></i></a></li>
+                <ul class="pagination justify-content-start" id="ordersListId">
+                    <%for(let i=1;i<=Math.ceil(response.totalOrders/10);i++){%>
+                        <li class="page-item" id="pagebtn-<%=i%>"><a class="page-link" href="#"
+                                onclick="OrderPagination(event,'<%=i%>','<%=Math.ceil(response.totalOrders/10)%>')">
+                                <%=i%>
+                            </a></li>
+                        <%}%>
                 </ul>
             </nav>
         </div>
@@ -144,11 +132,165 @@
         </div>
     </footer>
 
-    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/vendors/select2.min.js"></script>
-    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
-    <!-- Main Script -->
-    <script src="assets/js/main.js" type="text/javascript"></script>
+
+
 </body>
+
+<script>
+    //orderListPage Ajax
+
+
+    const orderStatusDown = document.getElementById("orderStatusId")
+    const orderStatusOpt = orderStatusDown.options;
+    orderStatusDown.addEventListener('change', () => {
+        let index = orderStatusOpt.selectedIndex
+        let orderStatusLabel = orderStatusOpt[index].value
+        console.log("orderStatusLabel : ", orderStatusLabel);
+        sortOrderStatus(orderStatusLabel)
+    })
+
+    function sortOrderStatus(orderStatus) {
+        if (orderStatus === 'showall') {
+            window.location.reload()
+        } else {
+
+            $.ajax({
+                url: '/admin/sortOrderStatus',
+                type: 'post',
+                data: {
+                    orderStatus
+                },
+                success: function (response) {
+                    let sortedOrderStatus = ''
+                    for (let i = 0; i < response.length; i++) {
+                        let ele = response[i]
+                        sortedOrderStatus += `
+                <tr>
+                                    <td>
+                                        ${ele.ordersId}
+                                    </td>
+                                    <td><b>
+                                        ${ele.firstname},
+                                        ${ele.lastName}
+                                        </b></td>
+                                    <td>
+                                        ${ele.email}
+                                    </td>
+                                    <td>₹ ${ele.totalPrice}
+                                    </td>`
+                        if (ele.orderStatus === 'cancelled') {
+                            sortedOrderStatus += ` <td><span class="badge rounded-pill alert-danger text-danger">
+                                                    ${ele.orderStatus}
+                                            </span></td>`
+                        } else if (ele.orderStatus === 'Delivered') {
+                            sortedOrderStatus += ` <td><span class="badge rounded-pill alert-success text-success">
+                                                        ${ele.orderStatus}
+                                                </span></td>`
+                        } else {
+                            sortedOrderStatus += `<td><span class="badge rounded-pill alert-warning">
+                                                        ${ele.orderStatus}
+                                                    </span></td>`
+                        }
+                        sortedOrderStatus += `<td><span class="badge rounded-pill alert-warning">
+                                                    ${ele.paymentStatus}
+                                                        </span></td>
+                                                    <td>
+                                                        ${ele.createdAt}
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <a href="/admin/order-proDetails?orderid= ${ele.ordersId}&email=${ele.email}"
+                                                            class="btn btn-md rounded font-sm">View</a>
+
+                                                    </td>
+                                </tr>`
+                    }
+
+                    $('#sortedTable').html(sortedOrderStatus)
+
+                },
+                error: function (err) {
+                    console.log(err);
+                    if (err.responseJSON.err1) {
+                        swal({
+                            title: err.responseJSON.err1,
+                            icon: "warning",
+                        });
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+
+    function OrderPagination(e, pageNo, totalPage) {
+        e.preventDefault()
+        console.log(pageNo);
+        $.ajax({
+            url: '/admin/orders',
+            type: 'get',
+            data: {
+                pageNo
+            },
+            success: function (response) {
+                console.log("response : ", response);
+                for (let i = 1; i <= parseInt(totalPage); i++) {
+                    let itemElement = document.getElementById('pagebtn-' + String(i))
+                    itemElement.classList.remove('active');
+                }
+                let itemElement = document.getElementById('pagebtn-' + pageNo)
+                itemElement.classList.add('active');
+
+                let orderListdiv = ''
+
+                for (let i = 0; i < response.orderDetails.length; i++) {
+                    const ele = response.orderDetails[i];
+                    orderListdiv += `
+                <tr>
+                                    <td>
+                                        ${ele.ordersId}
+                                    </td>
+                                    <td><b>
+                                        ${ele.firstname},
+                                        ${ele.lastName}
+                                        </b></td>
+                                    <td>
+                                        ${ele.email}
+                                    </td>
+                                    <td>₹ ${ele.totalPrice}
+                                    </td>`
+                    if (ele.orderStatus === 'cancelled') {
+                        orderListdiv += ` <td><span class="badge rounded-pill alert-danger text-danger">
+                                                    ${ele.orderStatus}
+                                            </span></td>`
+                    } else if (ele.orderStatus === 'Delivered') {
+                        orderListdiv += ` <td><span class="badge rounded-pill alert-success text-success">
+                                                        ${ele.orderStatus}
+                                                </span></td>`
+                    } else {
+                        orderListdiv += `<td><span class="badge rounded-pill alert-warning">
+                                                        ${ele.orderStatus}
+                                                    </span></td>`
+                    }
+                    orderListdiv += `<td><span class="badge rounded-pill alert-warning">
+                                                    ${ele.paymentStatus}
+                                                        </span></td>
+                                                    <td>
+                                                        ${ele.createdAt}
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <a href="/admin/order-proDetails?orderid=${ele.ordersId}&email=${ele.email}"
+                                                            class="btn btn-md rounded font-sm">View</a>
+
+                                                    </td>
+                                </tr>`
+                }
+
+                $('#sortedTable').html(orderListdiv)
+            }
+
+        })
+    }
+
+</script>
