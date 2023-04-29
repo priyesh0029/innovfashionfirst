@@ -49,75 +49,80 @@ module.exports = {
                 const Email = userData.email
                 const phone = userData.phonenumber
                 let userExist = await user.user.find({ $or: [{ email: Email }, { phonenumber: phone }] })
-                let userRefferal = await user.user.find({ refferalCode: userData.refferalCode })
-                console.log("userRefferal : ", userRefferal);
-                if (userRefferal) {
-                    const tranObj = {
-                        orderId: 'Refferal bonus', 
-                        amount: 100,
-                        date: new Date(),
-                        type: 'credit'
-                    }
-                    const existingWallet = await user.wallet.findOne({ "userId": userRefferal[0]?._id });
-                    if (existingWallet !== null) {
-                        existingWallet.balance += tranObj.amount;
-                        existingWallet.transactions.push(tranObj); // Add new transaction to array
-                        await existingWallet.save();
 
-                    } else {
-
-                        const newWallet = new user.wallet({
-                            userId: userRefferal[0]._id,
-                            balance: tranObj.amount,
-                            transactions: [tranObj] // Create new array with the new transaction
-                        })
-                        await newWallet.save();
-
-                    }
-                }
-                console.log("userExist :", userExist);
-                if (userExist.length !== 0) {
-                    response = { status: false }
-                    return resolve(response)
-                } else {
-                    var hashedPassword = await bcrypt.hash(userData.password, 10)
-                    const refferal = Math.random().toString(36).substring(2, 10);
-                    const data = new user.user({
-                        firstName: userData.fname,
-                        lastName: userData.lname,
-                        email: userData.email,
-                        phonenumber: userData.phonenumber,
-                        Password: hashedPassword,
-                        refferalCode: refferal
-
-                    })
-
-                    await data.save(data).then(async (data) => {
-                        console.log(data);
-                        if (data) {
-                            const tranObj = {
-                                orderId: 'Refferal bonus',
-                                amount: 50,
-                                date: new Date(),
-                                type: 'credit'
-                            }
-                            const existingWallet = await user.wallet.findOne({ "userId": data._id });
-                            if (existingWallet === null) {
-
-                                const newWallet = new user.wallet({
-                                    userId: data._id,
-                                    balance: tranObj.amount,
-                                    transactions: [tranObj] // Create new array with the new transaction
-                                })
-                                await newWallet.save();
-
-                            }
+                if(userExist){
+                    let userRefferal = await user.user.findOne({ refferalCode: userData.refferalCode })
+                    console.log("userRefferal : ", userRefferal);
+                    if (userRefferal) {
+                        const tranObj = {
+                            orderId: 'Refferal bonus', 
+                            amount: 100,
+                            date: new Date(),
+                            type: 'credit'
                         }
-                        response = { data, status: true }
+                        const existingWallet = await user.wallet.findOne({ "userId": userRefferal._id });
+                        if (existingWallet !== null) {
+                            existingWallet.balance += tranObj.amount;
+                            existingWallet.transactions.push(tranObj); // Add new transaction to array
+                            await existingWallet.save();
+    
+                        } else {
+    
+                            const newWallet = new user.wallet({
+                                userId: userRefferal[0]._id,
+                                balance: tranObj.amount,
+                                transactions: [tranObj] // Create new array with the new transaction
+                            })
+                            await newWallet.save();
+    
+                        }
+                    }
+                    console.log("userExist :", userExist);
+                    if (userExist.length !== 0) {
+                        response = { status: false }
                         return resolve(response)
-                    })
+                    } else {
+                        var hashedPassword = await bcrypt.hash(userData.password, 10)
+                        const refferal = Math.random().toString(36).substring(2, 10);
+                        const data = new user.user({
+                            firstName: userData.fname,
+                            lastName: userData.lname,
+                            email: userData.email,
+                            phonenumber: userData.phonenumber,
+                            Password: hashedPassword,
+                            refferalCode: refferal
+    
+                        })
+    
+                        await data.save(data).then(async (data) => {
+                            console.log(data);
+                            if (data) {
+                                const tranObj = {
+                                    orderId: 'Refferal bonus',
+                                    amount: 50,
+                                    date: new Date(),
+                                    type: 'credit'
+                                }
+                                const existingWallet = await user.wallet.findOne({ "userId": data._id });
+                                if (existingWallet === null) {
+    
+                                    const newWallet = new user.wallet({
+                                        userId: data._id,
+                                        balance: tranObj.amount,
+                                        transactions: [tranObj] // Create new array with the new transaction
+                                    })
+                                    await newWallet.save();
+    
+                                }
+                            }
+                            response = { data, status: true }
+                            return resolve(response)
+                        })
+                    }
+    
                 }
 
+               
 
             } catch (err) {
                 console.log(err);
