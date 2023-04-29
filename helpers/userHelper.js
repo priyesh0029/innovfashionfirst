@@ -53,7 +53,7 @@ module.exports = {
                 console.log("userRefferal : ", userRefferal);
                 if (userRefferal) {
                     const tranObj = {
-                        orderId: 'Refferal bonus',
+                        orderId: 'Refferal bonus', 
                         amount: 100,
                         date: new Date(),
                         type: 'credit'

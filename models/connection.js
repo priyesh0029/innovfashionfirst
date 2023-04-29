@@ -3,7 +3,16 @@ const ObjectId = require('mongodb').ObjectId
 
 
 
-const db = mongoose.connect("mongodb://0.0.0.0:27017/Innovfashion", {
+// const db = mongoose.connect("mongodb+srv://priyeshvayala:PRIYanka0029@@mumbai.nsxi5al.mongodb.net/test", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// })
+//   .then(() => console.log("Database connected!"))
+//   .catch(err => console.log(err));
+
+mongoose.set('strictQuery', false);
+
+mongoose.connect("mongodb+srv://priyeshvayala:PRIYanka0029@@mumbai.nsxi5al.mongodb.net/test", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
