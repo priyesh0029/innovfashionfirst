@@ -13,13 +13,12 @@
                 <p id="noOfProducts"></p>
               </div>
               <div class="sort-by-product-area" style="height: 6em;">
-
                 <!-- newlyaddedfeild-start -->
                 <div class="categori-dropdown-wrap  d-lg-block" style="margin-bottom: 5em;">
                   <ul>
                     <li class="has-children ">
                       <div class="filterDownNew" style="width: 12em;"><i class="fi-rs-apps-sort"></i>Sort by: <span>
-                          <i class="fi-rs-angle-small-down"></i></span></div>
+                        <i class="fi-rs-angle-small-down"></i></span></div>
                       <div class="dropdown-menu" style="min-width: fit-content;
                             top: 100%;
                             left: 0;
@@ -46,6 +45,7 @@
               </div>
             </div>
             <div class="row product-grid-3" id="productFilterPageId">
+              <%if(response.product !== null){%>
 
               <!-- firstcard -->
 
@@ -152,6 +152,22 @@
                 </ul>
               </nav>
             </div>
+            <%}else{%>
+              <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                <div class="product-cart-wrap mb-30">
+                  <div class="product-img-action-wrap">
+                    
+                    
+                   <div class="text-center"><h3>NO PRODUCTS ADDED YET ..!</h3></div>
+                  
+                 
+
+                          
+                  </div>
+                </div>
+              </div>
+              
+              <%}%>
           </div>
           <div class="col-lg-3 primary-sidebar sticky-sidebar">
 
