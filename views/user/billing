@@ -903,3 +903,5 @@ TWILIO_SERVICE_SID = 'VAdd2b983cfe8a10f19cdd11659fd5fe4d'
 #razorpay
 RAZORPAY_KEY_ID = 'rzp_test_wdO1BDjnHakmYI'
 RAZORPAY_KEY_SECRET = 'r0zHiyNRHQXRPufDBUscRyzt'
+
+"mongodb://0.0.0.0:27017/Innovfashion"

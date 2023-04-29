@@ -1,9 +1,7 @@
 var mongoose = require("mongoose");
 const ObjectId = require('mongodb').ObjectId
 
-
-
-const db = mongoose.connect("mongodb://0.0.0.0:27017/Innovfashion", {
+const db = mongoose.connect("mongodb+srv://priyeshvayala:PRIYanka0029%40@mumbai.nsxi5al.mongodb.net/innovfashion", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
