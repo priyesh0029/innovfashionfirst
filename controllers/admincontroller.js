@@ -345,9 +345,9 @@ module.exports = {
         console.log("hiiiiiii");
         try {
             adminHelpers.offerList().then((response) => {
-                res.render('admin/offerList', { adminStatus, layout: "adminLayout", response })
+                res.render('admin/offerlist', { adminStatus, layout: "adminLayout", response })
             }).catch((error)=>{
-                res.render('admin/offerList', { adminStatus, layout: "adminLayout", error })
+                res.render('admin/offerlist', { adminStatus, layout: "adminLayout", error })
             })
         } catch (error) {
             console.log(error);
