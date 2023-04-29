@@ -1391,6 +1391,7 @@ module.exports = {
                 }
 
             } catch (err) {
+                reject("you  have  no offer list to show")
                 console.log(err);
             }
         })
