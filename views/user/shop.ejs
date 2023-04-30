@@ -33,9 +33,9 @@
                             font-weight: 500;
                             cursor: pointer;">
                         <ul id="sortProductsDropdown">
-                          <li onclick="allProductSort('featured')">Featured</li>
-                          <li onclick="allProductSort('popular')">Popular</li>
-                          <li onclick="allProductSort('newlyAdded')">Newly added</li>
+                          <li class="text-center" id="featured" onclick="allProductSort('featured')">Featured</li>
+                          <li class="text-center" id="popular" onclick="allProductSort('popular')">Popular</li>
+                          <li class="text-center" id="newlyAdded" onclick="allProductSort('newlyAdded')">Newly added</li>
                         </ul>
                       </div>
                     </li>
@@ -508,6 +508,13 @@
   }
 
   function allProductSort(sortCondition) {
+    document.getElementById('featured').classList.remove('bg-primary');
+    document.getElementById('popular').classList.remove('bg-primary');
+    document.getElementById('newlyAdded').classList.remove('bg-primary');
+
+    let itemElement = document.getElementById(sortCondition)
+        itemElement.classList.add('bg-primary');
+
     subCatFilter(null, null, null, sortCondition)
   }
 

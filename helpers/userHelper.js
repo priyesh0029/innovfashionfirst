@@ -420,7 +420,19 @@ module.exports = {
                     let dashBoard = {}
                     dashBoard.featured = response
                     dashBoard.newAdded = await user.product.find({}).sort({ "_id": -1 }).limit(8)
-                    resolve(dashBoard)
+                    dashBoard.offer = await user.offer.find({"offerStatus":true})
+                    
+                    if(dashBoard.offer.length !==0){
+                        dashBoard.banner = []
+                        let offer1 = await user.product.findOne({"gender":dashBoard.offer[0].gender,"catagory":dashBoard.offer[0].category,"sub_catagory":dashBoard.offer[0].subcategory})
+                        dashBoard.banner.push(offer1.Image[0])
+                        if(dashBoard.offer.length > 0){
+                         let offer2 = await user.product.findOne({"gender":dashBoard.offer[1].gender,"catagory":dashBoard.offer[1].category,"sub_catagory":dashBoard.offer[1].subcategory})
+                         dashBoard.banner.push(offer2.Image[0])
+                        }
+                        console.log(dashBoard.banner);
+                    }
+                     resolve(dashBoard)
                 }
 
                 if (sortType === 'featured' || sortType === 'popular') {
