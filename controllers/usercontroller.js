@@ -10,7 +10,7 @@ module.exports = {
 
     getHome: (req, res) => {
         userhelpers.subCatFilter(null,null,null, 'featured','newAdded').then((response) => {
-            console.log("getHome: ",response);
+            console.log("getHome: ",response.featured[0].products);
             if (req.session.user != null) {
                 user = req.session.user.username
                 let cartCount = req.session.user.cartCount

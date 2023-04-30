@@ -173,19 +173,42 @@
                         <span>90%</span>
                       </span>
                     </div>
-                    <div class="product-price">
-                      <span> ₹ <%=response.featured[0].products[i].price%></span>
-                      <span class="old-price">$245.8</span>
-                    </div>
+                    <%if(response.featured[0].products[i].discountPrice){%>
+                      <div class="product-price">
+                        <span>
+                          ₹<%= response.featured[0].products[i].discountPrice%>
+                        </span>
+                        <span class="old-price">₹<%= response.featured[0].products[i].price%></span>
+                      </div>
+                      <%}else{%>
+                        <div class="product-price">
+                          <span>
+                            ₹<%= response.featured[0].products[i].price%>
+                          </span>
+                          <span class="old-price">₹1999.00</span>
+                        </div>
+                        <%}%>
                     <div class="product-action-1 show">
                       <% if(locals.headerStatus) {%>
-                        <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
-                            onclick="addTocart('<%=response.featured[0].products[i]._id%>','<%=response.featured[0].products[i].price%>')"></i></div>
+                        <%if(response.featured[0].products[i].product_details[0].quantity !==0){%>
 
-                        <%} else {%>
-                          <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
-                              class="fi-rs-shopping-bag-add" onclick="addTocart2()"></i></div>
-                          <%} %>
+                          <%if(response.featured[0].products[i].discountPrice){%>
+                            <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                                class="fi-rs-shopping-bag-add"
+                                onclick="addTocart('<%= response.featured[0].products[i]._id %>','<%= response.featured[0].products[i].discountPrice%>')"></i></div>
+                            <%}else{%>
+                              <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                                  class="fi-rs-shopping-bag-add"
+                                  onclick="addTocart('<%= response.featured[0].products[i]._id %>','<%= response.featured[0].products[i].price%>')"></i></div>
+                              <%}%>
+
+                                <%}%>
+                                  <%} else {%>
+                                    <div aria-label="Add To Cart" class="action-btn hover-up"
+                                      style="z-index: 100;"><i class="fi-rs-shopping-bag-add"
+                                        onclick="addTocart2()"></i></div>
+                                    <%} %>
+
                     </div>
                   </div>
                 </div>
@@ -380,20 +403,42 @@
                       <span>
                         <span>90%</span>
                       </span>
-                    </div>
-                    <div class="product-price">
-                      <span> ₹${ele.price}</span>
-                      <span class="old-price">$245.8</span>
-                    </div>
-                    <div class="product-action-1 show">
-                      <% if(locals.headerStatus) {%>
-                        <div aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"
-                            onclick="addTocart('${ele._id}','${ele.price}')"></i></div>
+                    </div>`
+                    if(ele.discountPrice){
+                      productFilterPage +=`    <div class="product-price">
+                        <span>
+                          ₹${ele.discountPrice}
+                        </span>
+                        <span class="old-price">₹${ele.price}</span>
+                      </div>`
+                      }else{
+                        productFilterPage +=`       <div class="product-price">
+                          <span>
+                            ₹${ele.price}
+                          </span>
+                          <span class="old-price">₹1999.00</span>
+                        </div>`
+                        }
+                        productFilterPage +=`  <div class="product-action-1 show">
+                      <% if(locals.headerStatus) {%>`
+                        if(ele.product_details[0].quantity !==0){
 
-                        <%} else {%>
-                          <div aria-label="Add To Cart" class="action-btn hover-up" style="z-index: 100;"><i
-                              class="fi-rs-shopping-bag-add" onclick="addTocart2()"></i></div>
-                          <%} %>
+                          if(ele.discountPrice){
+                            productFilterPage +=`      <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                                class="fi-rs-shopping-bag-add"
+                                onclick="addTocart('${ele._id}','${ele.discountPrice}')"></i></div>`
+                            }else{
+                              productFilterPage +=`     <div aria-label="Add To Cart" class="action-btn hover-up"><i
+                                  class="fi-rs-shopping-bag-add"
+                                  onclick="addTocart('${ele._id}','${ele.price}')"></i></div>`
+                              }
+
+                                }
+                                productFilterPage +=`        <%} else {%>
+                                    <div aria-label="Add To Cart" class="action-btn hover-up"
+                                      style="z-index: 100;"><i class="fi-rs-shopping-bag-add"
+                                        onclick="addTocart2()"></i></div>
+                                    <%} %>
                     </div>
                   </div>
                 </div>

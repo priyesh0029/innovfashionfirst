@@ -346,6 +346,10 @@ module.exports = {
                                 "productDetails.sub_catagory": 1,
                                 "productDetails.Image": 1,
                                 "productDetails.product_status": 1,
+                                "productDetails.productOfferStatus": 1,
+                                "productDetails.discountPrice": 1,
+                                "productDetails.discountPercentage": 1,
+                                "productDetails.offerStatus": 1,
                             }
                         },
                         {
@@ -364,6 +368,12 @@ module.exports = {
                                         sub_catagory: "$productDetails.sub_catagory",
                                         Image: "$productDetails.Image",
                                         product_status: "$productDetails.product_status",
+                                        productOfferStatus: "$productDetails.productOfferStatus",
+                                        discountPrice: "$productDetails.discountPrice",
+                                        discountPercentage: "$productDetails.discountPercentage",
+                                        offerStatus: "$productDetails.offerStatus",
+
+                                        
                                     },
 
                                 }
@@ -419,6 +429,10 @@ module.exports = {
                                 "productDetails.sub_catagory": 1,
                                 "productDetails.Image": 1,
                                 "productDetails.product_status": 1,
+                                "productDetails.productOfferStatus": 1,
+                                "productDetails.discountPrice": 1,
+                                "productDetails.discountPercentage": 1,
+                                "productDetails.offerStatus": 1,
                             }
                         },
                         {
@@ -437,6 +451,10 @@ module.exports = {
                                         sub_catagory: "$productDetails.sub_catagory",
                                         Image: "$productDetails.Image",
                                         product_status: "$productDetails.product_status",
+                                        productOfferStatus: "$productDetails.productOfferStatus",
+                                        discountPrice: "$productDetails.discountPrice",
+                                        discountPercentage: "$productDetails.discountPercentage",
+                                        offerStatus: "$productDetails.offerStatus",
                                     },
 
                                 }
