@@ -50,12 +50,12 @@ module.exports = {
                 const phone = userData.phonenumber
                 let userExist = await user.user.find({ $or: [{ email: Email }, { phonenumber: phone }] })
 
-                if(userExist){
+                if (userExist) {
                     let userRefferal = await user.user.findOne({ refferalCode: userData.refferalCode })
                     console.log("userRefferal : ", userRefferal);
                     if (userRefferal) {
                         const tranObj = {
-                            orderId: 'Refferal bonus', 
+                            orderId: 'Refferal bonus',
                             amount: 100,
                             date: new Date(),
                             type: 'credit'
@@ -65,16 +65,16 @@ module.exports = {
                             existingWallet.balance += tranObj.amount;
                             existingWallet.transactions.push(tranObj); // Add new transaction to array
                             await existingWallet.save();
-    
+
                         } else {
-    
+
                             const newWallet = new user.wallet({
                                 userId: userRefferal[0]._id,
                                 balance: tranObj.amount,
                                 transactions: [tranObj] // Create new array with the new transaction
                             })
                             await newWallet.save();
-    
+
                         }
                     }
                     console.log("userExist :", userExist);
@@ -91,9 +91,9 @@ module.exports = {
                             phonenumber: userData.phonenumber,
                             Password: hashedPassword,
                             refferalCode: refferal
-    
+
                         })
-    
+
                         await data.save(data).then(async (data) => {
                             console.log(data);
                             if (data) {
@@ -105,24 +105,24 @@ module.exports = {
                                 }
                                 const existingWallet = await user.wallet.findOne({ "userId": data._id });
                                 if (existingWallet === null) {
-    
+
                                     const newWallet = new user.wallet({
                                         userId: data._id,
                                         balance: tranObj.amount,
                                         transactions: [tranObj] // Create new array with the new transaction
                                     })
                                     await newWallet.save();
-    
+
                                 }
                             }
                             response = { data, status: true }
                             return resolve(response)
                         })
                     }
-    
+
                 }
 
-               
+
 
             } catch (err) {
                 console.log(err);
@@ -189,21 +189,13 @@ module.exports = {
     },
 
     otpLogin: (phonenumber) => {
-
         let response = []
-
         console.log("phonenumber : ", phonenumber);
 
         return new Promise(async (resolve, reject) => {
-
-
-
             try {
-
                 userinfo = await user.user.findOne({ phonenumber })
                 response = userinfo
-
-
                 resolve(response)
 
             } catch (err) {
@@ -213,6 +205,48 @@ module.exports = {
 
     },
 
+    postOtpSessionData: (mobile) => {
+        console.log(mobile, typeof mobile);
+        let response = {}
+         return new Promise(async (resolve, reject) => {
+
+            try {
+
+                let userInfo = await user.user.findOne({"phonenumber": mobile })
+                let userId = userInfo._id
+                console.log("userInfo : ", userInfo);
+                if (userInfo) {
+                    
+                    let cartCount = await user.cart.findOne({ "userId": userId }, { "count": 1, _id: 0 })
+                    let wishListCount = await user.wishlist.findOne({ "userId": userId }, { "count": 1, _id: 0 })
+                    console.log("cartCount : ", cartCount, wishListCount);
+                    if (cartCount === null) {
+                        cartCount = 0
+                    } else {
+                        cartCount = cartCount.count
+                    }
+                    if (wishListCount === null) {
+                        wishListCount = 0
+                    } else {
+                        wishListCount = wishListCount.count
+                    }
+                    let username = userInfo.firstName
+                    let email = userInfo.email
+                    let userBlockStatus = userInfo.userBlockStatus
+                    response = { username, email, userBlockStatus, cartCount, wishListCount }
+
+
+                    resolve(response)
+
+                    response = { status: false }
+                    resolve(response)
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
+        })
+    },
 
     ShopProducts: (pageNo) => {
 
@@ -244,7 +278,7 @@ module.exports = {
         if (pageNo === undefined) {
             pageNo = 1
         }
-        console.log("subCatFilter pageNO : ", pageNo,sortType,sortType2);
+        console.log("subCatFilter pageNO : ", pageNo, sortType, sortType2);
         return new Promise(async (resolve, reject) => {
 
             try {
@@ -414,31 +448,31 @@ module.exports = {
 
                 } else if (sortType === 'newlyAdded') {
                     response = await user.product.find({}).sort({ "_id": -1 }).limit(8)
-                } 
-                 if (sortType === 'featured' && sortType2 === 'newAdded') {
+                }
+                if (sortType === 'featured' && sortType2 === 'newAdded') {
                     console.log("sortType2");
                     let dashBoard = {}
                     dashBoard.featured = response
                     dashBoard.newAdded = await user.product.find({}).sort({ "_id": -1 }).limit(8)
-                    dashBoard.offer = await user.offer.find({"offerStatus":true})
-                    
-                    if(dashBoard.offer.length !==0){
+                    dashBoard.offer = await user.offer.find({ "offerStatus": true })
+
+                    if (dashBoard.offer.length !== 0) {
                         dashBoard.banner = []
-                        let offer1 = await user.product.findOne({"gender":dashBoard.offer[0].gender,"catagory":dashBoard.offer[0].category,"sub_catagory":dashBoard.offer[0].subcategory})
+                        let offer1 = await user.product.findOne({ "gender": dashBoard.offer[0].gender, "catagory": dashBoard.offer[0].category, "sub_catagory": dashBoard.offer[0].subcategory })
                         dashBoard.banner.push(offer1.Image[0])
-                        if(dashBoard.offer.length > 0){
-                         let offer2 = await user.product.findOne({"gender":dashBoard.offer[1].gender,"catagory":dashBoard.offer[1].category,"sub_catagory":dashBoard.offer[1].subcategory})
-                         dashBoard.banner.push(offer2.Image[0])
+                        if (dashBoard.offer.length > 0) {
+                            let offer2 = await user.product.findOne({ "gender": dashBoard.offer[1].gender, "catagory": dashBoard.offer[1].category, "sub_catagory": dashBoard.offer[1].subcategory })
+                            dashBoard.banner.push(offer2.Image[0])
                         }
                         console.log(dashBoard.banner);
                     }
-                     resolve(dashBoard)
+                    resolve(dashBoard)
                 }
 
                 if (sortType === 'featured' || sortType === 'popular') {
                     resolve(response[0].products)
                 }
-                 else {
+                else {
                     response = JSON.parse(JSON.stringify(response))
                     resolve(response)
                 }
@@ -793,8 +827,8 @@ module.exports = {
         })
     },
 
-    viewWallet: (email,pageNo) => {
-        console.log(" pageNo:",pageNo);
+    viewWallet: (email, pageNo) => {
+        console.log(" pageNo:", pageNo);
         if (pageNo === '') {
             pageNo = 1
         }
@@ -812,8 +846,8 @@ module.exports = {
                     wallet.transactions[i].date = moment(wallet.transactions[i].date).format('MMMM Do YYYY, h:mm:ss a');
                 }
                 response.balance = wallet.balance
-                response.transactions = wallet.transactions.reverse().slice((pageNo * 6 - 6),(pageNo * 6) )
-                console.log("WalletInfo 2: ",response);
+                response.transactions = wallet.transactions.reverse().slice((pageNo * 6 - 6), (pageNo * 6))
+                console.log("WalletInfo 2: ", response);
                 resolve(response)
             } catch (err) {
                 reject("unable to load wallet info")

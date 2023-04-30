@@ -96,16 +96,16 @@ module.exports = {
 
             } else if (response != null) {
 
-                user = response.firstName
+                user = response
 
                 mobile = response.phonenumber
 
                 console.log("otp response :", response);
 
                 twilio.send_otp(mobile).then((response) => {
-
-                    req.session.user = user
-                    res.render('user/otpverify')
+                    console.log(response);
+                    // req.session.user = user
+                    res.render('user/otpverify',{mobile})
                 })
 
             } else {
@@ -130,8 +130,10 @@ module.exports = {
         twilio.verifying_otp(mobile, otp).then((response) => {
 
             if (response.status == 'approved') {
-
-                res.redirect('/')
+                userhelpers.postOtpSessionData(mobile).then((response) => {
+                    req.session.user = response
+                    res.redirect('/')
+                })
             } else {
                 res.render('user/otpverify', { invalidOtp: true })
             }
