@@ -10,14 +10,14 @@ module.exports = {
 
     getHome: (req, res) => {
         userhelpers.subCatFilter(null,null,null, 'featured','newAdded').then((response) => {
-            
+            console.log("getHome: ",response);
             if (req.session.user != null) {
                 user = req.session.user.username
                 let cartCount = req.session.user.cartCount
                 let wishListCount = req.session.user.wishListCount
-                res.render('user/user', { headerStatus: true, user, cartCount, wishListCount });
+                res.render('user/user', { headerStatus: true, user, cartCount, wishListCount,response });
             } else {
-                res.render('user/user', { headerStatus: false });
+                res.render('user/user', { headerStatus: false,response });
             }
         })
 
@@ -568,6 +568,6 @@ module.exports = {
     getLogout: (req, res) => {
 
         req.session.user = null
-        res.render('user/user', { headerStatus: false });
+        res.redirect('/')
     }
 }

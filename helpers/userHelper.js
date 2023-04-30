@@ -244,7 +244,7 @@ module.exports = {
         if (pageNo === undefined) {
             pageNo = 1
         }
-        console.log("subCatFilter pageNO : ", pageNo);
+        console.log("subCatFilter pageNO : ", pageNo,sortType,sortType2);
         return new Promise(async (resolve, reject) => {
 
             try {
@@ -414,15 +414,19 @@ module.exports = {
 
                 } else if (sortType === 'newlyAdded') {
                     response = await user.product.find({}).sort({ "_id": -1 }).limit(8)
-                } else if (sortType2 === 'newAdded') {
+                } 
+                 if (sortType === 'featured' && sortType2 === 'newAdded') {
                     console.log("sortType2");
-                    response.featured = response
-                    response.newAdded = await user.product.find({}).sort({ "_id": -1 }).limit(8)
+                    let dashBoard = {}
+                    dashBoard.featured = response
+                    dashBoard.newAdded = await user.product.find({}).sort({ "_id": -1 }).limit(8)
+                    resolve(dashBoard)
                 }
 
                 if (sortType === 'featured' || sortType === 'popular') {
-                    resolve(response[0] && response[0].products)
-                } else {
+                    resolve(response[0].products)
+                }
+                 else {
                     response = JSON.parse(JSON.stringify(response))
                     resolve(response)
                 }

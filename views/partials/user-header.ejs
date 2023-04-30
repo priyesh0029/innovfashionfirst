@@ -193,14 +193,16 @@
     <div class="mobile-header-wrapper-inner">
       <div class="mobile-header-top">
         <div class="mobile-header-logo">
-          <a href="index.html"><img src="assets/imgs/theme/logo.svg" alt="logo" /></a>
+          <a href="/"><img src="/assets/imgs/theme/logo.jpg" alt="logo" /></a>
         </div>
+        
         <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
           <button class="close-style search-close">
             <i class="icon-top"></i>
             <i class="icon-bottom"></i>
           </button>
         </div>
+        
       </div>
       <div class="mobile-header-content-area">
         <div class="mobile-search search-style-3 mobile-header-border">
@@ -217,31 +219,13 @@
             <div class="categori-dropdown-wrap categori-dropdown-active-small">
               <ul>
                 <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-dress"></i>Women's Clothing</a>
+                  <a href="/shop"><i class="evara-font-dress"></i>Women's Clothing</a>
                 </li>
                 <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-tshirt"></i>Men's Clothing</a>
+                  <a href="/shop"><i class="evara-font-tshirt"></i>Men's Clothing</a>
                 </li>
                 <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-smartphone"></i> Cellphones</a>
-                </li>
-                <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-desktop"></i>Computer & Office</a>
-                </li>
-                <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-cpu"></i>Consumer Electronics</a>
-                </li>
-                <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-home"></i>Home & Garden</a>
-                </li>
-                <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-high-heels"></i>Shoes</a>
-                </li>
-                <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-teddy-bear"></i>Mother & Kids</a>
-                </li>
-                <li>
-                  <a href="shop-grid-right.html"><i class="evara-font-kite"></i>Outdoor fun</a>
+                  <a href="/shop"><i class="evara-font-teddy-bear"></i>Kids's Clothing</a>
                 </li>
               </ul>
             </div>
@@ -250,34 +234,73 @@
           <nav>
             <ul class="mobile-menu">
               <li class="menu-item-has-children">
-                <span class="menu-expand"></span><a href="/">Home</a>
+               
+                <div class="col-xl-3 col-lg-4 d-flex" style="justify-content: space-between;">
+                  <div> <span class="menu-expand"></span><a href="/">Home</a></div>
+                  <div class="header-info header-info-right">
+                    <ul>
+                      
+        
+                      <li>
+                        <a class="language-dropdown-active" href="#" style="bottom: 6px; left: 18px;">
+                          <% if(locals.headerStatus){%>
+                              <%=locals.user%>
+                          <%}else
+                            {%>
+                                User 
+                            <%}
+                           %>
+                                  <i class="fi-rs-angle-small-down"></i>
+                        </a>
+                        <ul class="language-dropdown" style="left: -3rem;">
+                          <% if(locals.headerStatus)
+                            {%>
+                              <li>
+                                <a href="/userProfile">My profile</a>
+                                </li>
+                              <li>
+                                <a href="/logout">Log out</a>
+                              </li>
+                            <%} else
+                            {%>
+                              <li>
+                              <a href="/login">Log In</a>
+                              </li>
+                            <%} 
+                          %>
+                        </ul>
+                      </li>
+        
+        
+                    </ul>
+                  </div>
+                </div>
               </li>
               <li class="menu-item-has-children">
                 <span class="menu-expand"></span><a href="/shop">Shop</a>
               </li>
               <li class="menu-item-has-children">
-                <span class="menu-expand"></span><a href="#">Orders</a>
+                <span class="menu-expand"></span><a href="/orderlist">Orders</a>
               </li>
               <!-- <li class="menu-item-has-children">
                 <span class="menu-expand"></span><a href="blog-category-fullwidth.html">About</a>
               </li>
               <li class="menu-item-has-children">
-                <span class="menu-expand"></span><a href="blog-category-fullwidth.html">Contact</a>
+                <span class="menu-expand"></span><a href="blog-category-fullwidth.html">logout</a>
               </li> -->
+              
 
             </ul>
           </nav>
           <!-- mobile menu end -->
         </div>
         <div class="mobile-header-info-wrap mobile-header-border">
-          <div class="single-mobile-header-info mt-30">
-            <a href="page-contact.html"> Our location </a>
+          
+          <div class="single-mobile-header-info">
+            <a href="/login">Log In / Sign Up </a>
           </div>
           <div class="single-mobile-header-info">
-            <a href="page-login-register.html">Log In / Sign Up </a>
-          </div>
-          <div class="single-mobile-header-info">
-            <a href="#">(+01) - 2345 - 6789 </a>
+            <a href="#">(+91) 9567060029 </a>
           </div>
         </div>
         <div class="mobile-social-icon">
@@ -313,40 +336,13 @@
         </div>
         <div class="col-xl-6 col-lg-4">
           <div class="text-center">
-            <!-- <div id="news-flash" class="d-inline-block">
-              <ul>
-                <li><br>
-                  Get great devices up to 50% off
-                  <a href="shop-grid-right.html">View details</a>
-                </li><br>
-                <li>Supper Value Deals - Save more with coupons</li>
-                <li><br>
-                  Trendy 25silver jewelry, save up 35% off today
-                  <a href="shop-grid-right.html">Shop now</a><br>
-                </li>
-              </ul>
-            </div> -->
+           
           </div>
         </div>
         <div class="col-xl-3 col-lg-4">
           <div class="header-info header-info-right">
             <ul>
-              <!-- <li>
-                <a class="language-dropdown-active" href="#">
-                  <i class="fi-rs-world"></i> English
-                  <i class="fi-rs-angle-small-down"></i></a>
-                <ul class="language-dropdown">
-                  <li>
-                    <a href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="" />Français</a>
-                  </li>
-                  <li>
-                    <a href="#"><img src="/assets/imgs/theme/flag-dt.png" alt="" />Deutsch</a>
-                  </li>
-                  <li>
-                    <a href="#"><img src="/assets/imgs/theme/flag-ru.png" alt="" />Pусский</a>
-                  </li>
-                </ul>
-              </li> -->
+              
 
               <li>
                 <a class="language-dropdown-active" href="#">
@@ -389,7 +385,7 @@
     <div class="container">
       <div class="header-wrap">
         <div class="logo logo-width-1">
-          <a href="index.html"><img src="/assets/imgs/theme/logo.jpg" alt="logo" /></a>
+          <a href="/"><img src="/assets/imgs/theme/logo.jpg" alt="logo" /></a>
         </div>
         <div class="header-right">
           <div class="search-style-2">
@@ -482,7 +478,7 @@
     <div class="container">
       <div class="header-wrap header-space-between position-relative main-nav">
         <div class="logo logo-width-1 d-block d-lg-none">
-          <a href="index.html"><img src="/assets/imgs/theme/logo.svg" alt="logo" /></a>
+          <a href="/"><img src="/assets/imgs/theme/logo.jpg" alt="logo" /></a>
         </div>
         <div class="header-nav d-none d-lg-flex">
           <div class="main-categori-wrap d-none d-lg-block">
@@ -522,9 +518,16 @@
         <div class="header-action-right d-block d-lg-none">
           <div class="header-action-2">
             <div class="header-action-icon-2">
-              <a href="shop-wishlist.html">
+              <a href="/wishlist">
                 <img alt="Evara" src="/assets/imgs/theme/icons/icon-heart.svg" />
-                <span class="pro-count white">4</span>
+                <% if(locals.headerStatus){%>
+                  <span class="pro-count white"> <%=locals.wishListCount%></span>
+              <%}else
+                {%>
+                  <span class="pro-count white">0</span>
+                <%}
+               %>
+               
               </a>
             </div>
             <div class="header-action-icon-2">
