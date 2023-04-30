@@ -17,12 +17,16 @@ module.exports = {
         adminHelpers.adminLogin(req.body).then((response) => {
 
             console.log("response login admin  : ", response);
-            req.session.admin = response
-
-            if (req.session.admin) {
+            
+            if (response.status) {
+                req.session.admin = response
                 adminStatus = req.session.admin.status
                 res.redirect('/admin/admin-dashboard')
+            }else{
+                res.render('admin/login', { adminStatus: false, layout: "adminLayout2",wrongPassword: true,error :"invalid email or password" }) 
             }
+        }).catch((error)=>{
+            res.render('admin/login', { adminStatus: false, layout: "adminLayout2" })
         })
 
     },

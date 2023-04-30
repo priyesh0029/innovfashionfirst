@@ -1,3 +1,4 @@
+<script src="/assets/js/loginFormValidation.js"></script>
 <section>
   <div class="page-header breadcrumb-wrap">
     <div class="container">
@@ -43,8 +44,11 @@
                           type=""
                           required=""
                           name="email"
+                          id="email1"
                           placeholder="Your Email/Mobile Number"
+                          onkeyup="validateEmail()"
                         />
+                        <span class="text-danger" id="email-error"></span>
                       </div>
                       <div class="form-group">
                         <input
@@ -52,7 +56,10 @@
                           type="password"
                           name="password"
                           placeholder="Password"
+                          id="password1"
+                          onkeyup="validatePassword()"
                         />
+                        <span class="text-danger" id="password-error"></span>
                       </div>
                       <div class="login_footer form-group">
                         <div class="chek-form">
@@ -79,11 +86,15 @@
                           class="btn btn-fill-out btn-block hover-up"
                           name="login"
                           style="width: 100%"
+                          onclick="validateForm()"
+                          id="submit"
                         >
                           Log in
                         </button>
+                        <span class="text-danger" id="submit-error"></span>
                       </div>
                       <div>
+                        <span class="text-success" id="success"></span>
                         <p class="mb-3 text-center text-success">OR</p>
                       </div>
                       <div class="form-group">

@@ -1,3 +1,5 @@
+<script src="/assets/js/signUpvalidation.js"></script>
+
 <section class="mx-auto">
   <main class="main">
     <div class="page-header breadcrumb-wrap">
@@ -35,8 +37,11 @@
                         type="text"
                         required=""
                         name="fname"
+                        id="formName"
                         placeholder="firstname"
-                      />
+                        onkeyup="validateFname()"
+                        />
+                        <span class="text-danger" id="name-error"></span>
                       
                         
                     </div>
@@ -47,8 +52,11 @@
                         type="text"
                         required=""
                         name="lname"
+                        id="lname"
                         placeholder="lastname"
-                      />
+                        onkeyup="validateLname()"
+                        />
+                        <span class="text-danger" id="lname-error"></span>
                       
                         
                     </div>
@@ -63,23 +71,32 @@
                       required=""
                       name="email"
                       placeholder="Email"
-                    />
+                      id="email1"
+                      onkeyup="validateEmail()"
+                      />
+                      <span class="text-danger" id="email-error"></span>
                   </div>
                   <div class="form-group">
                     <input
                       type="number"
                       required=""
                       name="phonenumber"
+                      id="formMobile"
                       placeholder="Phone Number"
-                    />
+                      onkeyup="validateMobile()"
+                      />
+                      <span class="text-danger" id="mobile-error"></span>
                   </div>
                   <div class="form-group">
                     <input
                       required=""
                       type="password"
                       name="password"
+                      id="password1"
                       placeholder="Password"
-                    />
+                      onkeyup="validatePassword()"
+                      />
+                      <span class="text-danger" id="password-error"></span>
                   </div>
                   <div class="form-group">
                     <input
@@ -113,13 +130,16 @@
                     <button
                       type="submit"
                       class="btn btn-fill-out btn-block hover-up"
-                      
+                      onclick="validateForm()"
+                          id="submit"
                     >
                       Submit &amp; Register
                     </button>
+                    <span class="text-danger" id="submit-error"></span>
                   </div>
                 </form>
                 <div class="divider-text-center mt-15 mb-15">
+                  <span class="text-success" id="success"></span>
                   <span> or</span>
                 </div>
                 

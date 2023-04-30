@@ -12,6 +12,9 @@
 
             <form action="/admin" method="post">
               <div class="form-outline mb-4">
+                <%if(locals.wrongPassword){%>
+                  <p class="text-danger">Invalid Credentials </p>
+                  <%}%>
                 <input type="email" id="typeEmailX-2" class="form-control form-control-lg" name="email" placeholder="Enter your e-mail address" style="font-size: medium;"/>
               </div>
   

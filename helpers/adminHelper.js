@@ -46,6 +46,7 @@ module.exports = {
 
             } catch (err) {
                 console.log(err);
+                reject("invalid email or password")
             }
 
 
