@@ -341,11 +341,11 @@
                         location.href = "/"
                     }
                     if (response.CodStatus) {
-                        location.href = "/orderLandingPage"
+                        location.href = `/orderLandingPage?orderId=${response.orderId}`
                     } else if (response.Razorstatus) {
                         getRazorpay(response)
                     } else if (response.WalletStatus) {
-                        location.href = "/orderLandingPage"
+                        location.href = `/orderLandingPage?orderId=${response.orderId}`
                     }
                 },
                 error: (response) => {
@@ -401,7 +401,7 @@
     }
 
     const verifyPayment = (payment, order) => {
-        console.log("paymentand order : ", payment, order);
+        console.log("paymentand order 55555555555555555555555555555: ", payment, order);
         $.ajax({
             type: "post",
             url: '/verify-payment',
@@ -412,7 +412,7 @@
             success: (response) => {
                 if (response.status) {
                     console.log(response)
-                    location.href = '/orderLandingPage'
+                    location.href = `/orderLandingPage?orderId=${payment.receipt}`
 
                 } else {
                     // $('#failureModal').modal('show');

@@ -506,9 +506,9 @@ module.exports = {
             if (!response.userCart) {
                 res.json(response)
             } else {
-
+                const orderId = response.insertedOrderId
                 if (payment_option === 'COD') {
-                    res.status(200).json({ CodStatus: true })
+                    res.status(200).json({ CodStatus: true ,orderId :orderId})
                 } else if (payment_option === 'Razorpay') {
                     const order = await userhelpers.getRazorpay(response)
                     order.Razorstatus = true
@@ -516,7 +516,7 @@ module.exports = {
                     res.json(order)
                 } else if(payment_option === 'Wallet'){
                     userhelpers.getWalletpay(response).then((response)=>{
-                        res.status(200).json({ WalletStatus: true })
+                        res.status(200).json({ WalletStatus: true ,orderId :orderId})
                     }).catch((response)=>{
                         console.log(response);
                         res.status(400).json(response)
@@ -542,8 +542,9 @@ module.exports = {
     orderLandinPage: (req, res) => {
         let cartCount = req.session.user.cartCount
         let wishListCount = req.session.user.wishListCount
-
-        res.render('user/orderPlaced', { headerStatus: true, cartCount, wishListCount, user })
+        let orderId = req.query.orderId
+        console.log("req.query.orderId :",orderId);
+        res.render('user/orderPlaced', { headerStatus: true, cartCount, wishListCount, user ,orderId})
     },
     getAvailableCoupen:(req, res) => {
         const email = req.session.user.email

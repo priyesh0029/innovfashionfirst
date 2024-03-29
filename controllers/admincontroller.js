@@ -46,7 +46,7 @@ module.exports = {
 
     getAdminDashboard: (req, res) => {
         adminHelpers.getAdminDashboard().then((response) => {
-
+            console.log(" response to the dashboard : ", response);
             res.render('admin/admin-dashboard', { adminStatus, layout: "adminLayout", response })
         })
     },

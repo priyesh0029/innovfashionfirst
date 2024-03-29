@@ -61,7 +61,7 @@
 
                                     <td><span class="badge rounded-pill alert-success text-success">
                                             <% if(response[i].paymentMethod==="COD" ){%>
-                                                cash on delivery<%} else{%>response[i].paymentMethod<%}%>
+                                                cash on delivery<%} else{%> <%=response[i].paymentMethod%><%}%>
                                         </span></td>
                                     <td>
                                         <%=response[i].createdAt %>

@@ -21,6 +21,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+const oneDayMilliseconds = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
 app.use(cors())
 app.use(expressLayouts)
@@ -29,7 +30,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret:"key", resave: true,saveUninitialized: true,cookie:{maxAge:6000000000}}))
+app.use(session({secret:"key", resave: true,saveUninitialized: true,cookie: {
+  maxAge: oneDayMilliseconds, // Set cookie's max age to 1 day
+  expires: new Date(Date.now() + oneDayMilliseconds) // Set session's expiration to 1 day from now
+}}))
 app.use(nocache())
 
 app.use('/', userRouter);
